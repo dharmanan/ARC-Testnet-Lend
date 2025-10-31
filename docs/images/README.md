@@ -1,4 +1,4 @@
-# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images
+# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images
 
 
 
@@ -10,11 +10,11 @@ This folder contains visual assets for ARC Lending Protocol documentation.
 
 
 
-### MetaMask Alert Screenshots (Optimized)
+### MetaMask Alert Screenshots (REAL!)
 
 
 
-✅ **redalrt.png** (360x381px, 49KB)## Current ImagesThis folder contains visual assets for ARC Lending Protocol documentation.This folder contains visual assets for ARC Lending Protocol documentation.
+✅ **redalrt.png** (1200x800px)## Current ImagesThis folder contains visual assets for ARC Lending Protocol documentation.
 
    - Red alert WITHOUT warning banner
 
@@ -24,13 +24,13 @@ This folder contains visual assets for ARC Lending Protocol documentation.
 
 ### MetaMask Alert Screenshots (Optimized)
 
-✅ **redalrtfix.png** (377x392px, 50KB)
+✅ **redalrtfix.png** (1200x800px)
 
    - Red alert WITH warning banner
 
    - Shows what users see when informed
 
-   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)✅ **redalrt.png** (360x381px, 49KB)## ⚠️ Image Files Moved to Base64## Preview Images
+   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)✅ **redalrt.png** (360x381px, 49KB)## Current ImagesThis folder contains visual assets for ARC Lending Protocol documentation.This folder contains visual assets for ARC Lending Protocol documentation.
 
 
 
@@ -40,13 +40,13 @@ This folder contains visual assets for ARC Lending Protocol documentation.
 
 ```markdown   - Shows what users see when confused
 
-![MetaMask Red Alert Before](redalrt.png)
+![MetaMask Red Alert Before](images/redalrt.png)
 
-![MetaMask Red Alert After](redalrtfix.png)   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)
+![MetaMask Red Alert After](images/redalrtfix.png)   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)
 
 ```
 
-Due to GitHub display issues with binary PNG files, the MetaMask alert screenshots have been converted to base64 and embedded directly in this README.### Before (Confusing Red Alert)
+### MetaMask Alert Screenshots (Optimized)
 
 ## Available for Future Screenshots
 
@@ -54,7 +54,7 @@ Due to GitHub display issues with binary PNG files, the MetaMask alert screensho
 
 When adding more images, use this structure:
 
-   - Red alert WITH warning banner<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtAAAAL6CAYAAAAfYGHMAAAKsGlDQ1BJQ0MgUHJvZmlsZQAASImVlwdUE1kXx99MeqMlVCmhd6QTQErooUivohKSAKHEGAgoYkMWV3AtqIhgA1kVUbBRRVEsWFgEFLEviCgon4sFGyrfAIewu1873z3" width="400" alt="MetaMask Red Alert Before">
+   - Red alert WITH warning banner
 
 ### Naming Convention
 
@@ -62,7 +62,7 @@ When adding more images, use this structure:
 
 [feature]-[scenario]-[state].png
 
-metamask-alert-before.png   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)## Preview Images
+metamask-alert-before.png   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)✅ **redalrt.png** (360x381px, 49KB)## ⚠️ Image Files Moved to Base64## Preview Images
 
 swap-page-after.png
 
@@ -70,6 +70,77 @@ approval-process-step1.png
 
 ```
 
+## How to Reference in Markdown   - Red alert WITHOUT warning banner
+
+### Recommended Format
+
+- Format: PNG-24 (supports transparency)
+
+- Size: Max 1200x800px (mobile-friendly)
+
+- DPI: 72 (web standard)```markdown   - Shows what users see when confused
+
+- Quality: Maximum compression without losing clarity
+
+![MetaMask Red Alert Before](redalrt.png)
+
+## Current Status
+
+![MetaMask Red Alert After](redalrtfix.png)   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)
+
+- ✅ Red alert screenshots (REAL)
+
+- ✅ Before/After comparison ready```
+
+- ⏳ Swap page banner screenshots (optional)
+
+- ⏳ Annotated versions with labels (optional)Due to GitHub display issues with binary PNG files, the MetaMask alert screenshots have been converted to base64 and embedded directly in this README.### Before (Confusing Red Alert)
+
+
+
+## Using the Screenshots## Available for Future Screenshots
+
+
+
+### In Documentation✅ **redalrtfix.png** (377x392px, 50KB)
+
+```markdown
+
+## Before (Confusing)When adding more images, use this structure:
+
+![Alert Before](images/redalrt.png)
+
+```   - Red alert WITH warning banner<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtAAAAL6CAYAAAAfYGHMAAAKsGlDQ1BJQ0MgUHJvZmlsZQAASImVlwdUE1kXx99MeqMlVCmhd6QTQErooUivohKSAKHEGAgoYkMWV3AtqIhgA1kVUbBRRVEsWFgEFLEviCgon4sFGyrfAIewu1873z3" width="400" alt="MetaMask Red Alert Before">
+
+
+
+### In README### Naming Convention
+
+```markdown
+
+![Demo](docs/images/redalrt.png)```   - Shows what users see when informed
+
+```
+
+[feature]-[scenario]-[state].png
+
+### In Web/Blog
+
+Use full URL if serving from GitHub:metamask-alert-before.png   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)## Preview Images
+
+```
+
+https://raw.githubusercontent.com/dharmanan/ARC-Testnet-Lend/main/docs/images/redalrt.pngswap-page-after.png
+
+```
+
+approval-process-step1.png
+
+---
+
+```
+
+**Note**: All images should be web-optimized (compressed) to keep documentation load time fast.
 ## Preview Images### After (Clear Red Alert with Warning)
 
 ### Recommended Format
