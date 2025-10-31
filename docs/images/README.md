@@ -2,19 +2,19 @@
 
 This folder contains visual assets for ARC Lending Protocol documentation.
 
-## ⚠️ Image Files Temporarily Removed
+## Current Images
 
-The PNG image files (`redalrt.png` and `redalrtfix.png`) have been temporarily removed from this repository due to GitHub display issues with binary files.
+### MetaMask Alert Screenshots (REAL!)
 
-### What Was Here Before:
-- **redalrt.png**: MetaMask red alert WITHOUT warning banner
-- **redalrtfix.png**: MetaMask red alert WITH warning banner
+✅ **redalrt.png** (720x762px, 77KB)
+   - Red alert WITHOUT warning banner
+   - Shows what users see when confused
+   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)
 
-### 🔄 To Restore Images:
-If you need these images, they can be re-added by:
-1. Taking new screenshots of MetaMask alerts
-2. Optimizing images to under 100KB each
-3. Using web-safe formats (PNG-24 recommended)
+✅ **redalrtfix.png** (754x784px, 81KB)
+   - Red alert WITH warning banner
+   - Shows what users see when informed
+   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)
 
 ## How to Reference in Markdown
 
