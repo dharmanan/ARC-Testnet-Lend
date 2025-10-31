@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockScout Auto Verification</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #0d1117;
+            color: #c9d1d9;
+        }
+        .container {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        h1 {
+            color: #58a6ff;
+            text-align: center;
+        }
+        .contract {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .contract h3 {
+            color: #79c0ff;
+            margin: 0 0 10px 0;
+        }
+        .contract p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px 5px 5px 0;
+            font-family: monospace;
+        }
+        button:hover {
+            background: #2ea043;
+        }
+        button:disabled {
+            background: #6e7681;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .status.pending {
+            background: #3d444d;
+            color: #f0f6fc;
+        }
+        .status.success {
+            background: #238636;
+            color: #f0f6fc;
+        }
+        .status.error {
+            background: #da3633;
+            color: #f0f6fc;
+        }
+        .code-preview {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 150px;
+            overflow-y: auto;
+            margin: 10px 0;
+            font-size: 10px;
+            color: #79c0ff;
+        }
+        .link {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 BlockScout Auto Verification</h1>
+        <p style="text-align: center; color: #8b949e;">Arc Testnet - GenericAMMPair Contracts</p>
+
+        <div id="contracts"></div>
+
+        <hr style="border: 1px solid #30363d; margin: 30px 0;">
+        
+        <div style="text-align: center;">
+            <button onclick="verifyAll()" id="verifyAllBtn">🚀 Verify ALL 3 Contracts</button>
+            <button onclick="location.reload()" style="background: #6e7681;">🔄 Reset</button>
+        </div>
+    </div>
+
+    <script>
+        const contracts = [
+            {
+                name: "GenericAMMPair (ETH/WBTC)",
+                address: "0xF4638B258905C6a2F7Aa71E05aAC887dB697c338",
+                contractName: "GenericAMMPair",
+                constructorArgs: "0x0000000000000000000000006dc1d97820974558e1bd555c04a5a19608f9512d00000000000000000000000027488db1f8f9529b5820de984262179ad913798e"
+            },
+            {
+                name: "GenericAMMPair (ETH/ARC)",
+                address: "0x677df5298Fd0a80672b1E6B4a61BEB75534a83A1",
+                contractName: "GenericAMMPair",
+                constructorArgs: "0x0000000000000000000000006dc1d97820974558e1bd555c04a5a19608f9512d00000000000000000000000056effb3b22dbbe576e4327d196aa5ed51476924e"
+            },
+            {
+                name: "GenericAMMPair (WBTC/ARC)",
+                address: "0x27e14cfEF1a029A32F574263dce67371bce32d24",
+                contractName: "GenericAMMPair",
+                constructorArgs: "0x00000000000000000000000027488db1f8f9529b5820de984262179ad913798e00000000000000000000000056effb3b22dbbe576e4327d196aa5ed51476924e"
+            }
+        ];
+
+        let sourceCode = "";
+
+        // Fetch flattened source code
+        async function fetchSourceCode() {
+            try {
+                const response = await fetch('/workspaces/ARC-Testnet-Lend/FLATTENED_GenericAMMPair.sol');
+                sourceCode = await response.text();
+                console.log("✅ Source code loaded:", sourceCode.length, "bytes");
+            } catch (e) {
+                console.error("❌ Failed to load source code:", e);
+                // Use placeholder
+                sourceCode = "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;";
+            }
+        }
+
+        function updateUI() {
+            const container = document.getElementById('contracts');
+            container.innerHTML = contracts.map((contract, idx) => `
+                <div class="contract">
+                    <h3>#${idx + 1} ${contract.name}</h3>
+                    <p><strong>Address:</strong> <code>${contract.address}</code></p>
+                    <p><strong>Explorer:</strong> 
+                        <a href="https://explorer.testnet.arc.network/address/${contract.address}" class="link" target="_blank">
+                            🔗 View on BlockScout
+                        </a>
+                    </p>
+                    <p><strong>Constructor Args (ABI-encoded):</strong></p>
+                    <input type="text" value="${contract.constructorArgs}" readonly>
+                    <button onclick="verifyContract(${idx})">Verify #${idx + 1}</button>
+                    <div id="status-${idx}" class="status pending" style="display: none;"></div>
+                </div>
+            `).join('');
+        }
+
+        async function verifyContract(idx) {
+            const contract = contracts[idx];
+            const statusDiv = document.getElementById(`status-${idx}`);
+            const button = event.target;
+            
+            button.disabled = true;
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status pending';
+            statusDiv.innerHTML = '⏳ Sending to BlockScout...';
+
+            try {
+                const formData = new FormData();
+                formData.append('module_for_api', 'contract_contracts');
+                formData.append('module', 'contract_contracts');
+                formData.append('action', 'verify_contract');
+                formData.append('addressHash', contract.address);
+                formData.append('compiler', 'solc-0.8.20');
+                formData.append('optimization', 'true');
+                formData.append('optimizationRuns', '200');
+                formData.append('sourceCode', sourceCode);
+                formData.append('contractName', contract.contractName);
+                formData.append('constructorArguments', contract.constructorArgs);
+
+                const response = await fetch('https://explorer.testnet.arc.network/api', {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'no-cors'
+                });
+
+                // With no-cors, we can't read response
+                // But request was sent to backend
+                setTimeout(() => {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = '✅ Verification request sent!<br>Backend is processing (2-5 min)...';
+                }, 1000);
+
+                button.disabled = false;
+            } catch (e) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `❌ Error: ${e.message}`;
+                button.disabled = false;
+            }
+        }
+
+        async function verifyAll() {
+            const btn = document.getElementById('verifyAllBtn');
+            btn.disabled = true;
+
+            for (let i = 0; i < contracts.length; i++) {
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        // Simulate button click
+                        const contract = contracts[i];
+                        const statusDiv = document.getElementById(`status-${i}`);
+                        
+                        statusDiv.style.display = 'block';
+                        statusDiv.className = 'status pending';
+                        statusDiv.innerHTML = '⏳ Sending...';
+
+                        fetch('https://explorer.testnet.arc.network/api', {
+                            method: 'POST',
+                            body: new FormData(Object.assign(document.createElement('form'), {
+                                innerHTML: `
+                                    <input name="module_for_api" value="contract_contracts">
+                                    <input name="module" value="contract_contracts">
+                                    <input name="action" value="verify_contract">
+                                    <input name="addressHash" value="${contract.address}">
+                                    <input name="compiler" value="solc-0.8.20">
+                                    <input name="optimization" value="true">
+                                    <input name="optimizationRuns" value="200">
+                                    <textarea name="sourceCode">${sourceCode}</textarea>
+                                    <input name="contractName" value="${contract.contractName}">
+                                    <input name="constructorArguments" value="${contract.constructorArgs}">
+                                `
+                            }).querySelector('form')),
+                            mode: 'no-cors'
+                        }).then(() => {
+                            setTimeout(() => {
+                                statusDiv.className = 'status success';
+                                statusDiv.innerHTML = '✅ Sent! Backend processing (2-5 min)';
+                            }, 500);
+                        }).catch(e => {
+                            statusDiv.className = 'status error';
+                            statusDiv.innerHTML = `❌ ${e.message}`;
+                        });
+
+                        resolve();
+                    }, i * 3000);
+                });
+            }
+
+            btn.disabled = false;
+        }
+
+        // Initialize on load
+        window.addEventListener('load', async () => {
+            await fetchSourceCode();
+            updateUI();
+        });
+    </script>
+</body>
+</html>

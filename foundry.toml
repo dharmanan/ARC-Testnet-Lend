@@ -1,0 +1,12 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.20"
+script = "script"
+
+[rpc_endpoints]
+arc-testnet = "${ARC_TESTNET_RPC_URL}"
+
+[etherscan]
+arc-testnet = { key = "" }

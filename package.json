@@ -1,0 +1,13 @@
+{
+  "name": "relayer",
+  "version": "1.0.0",
+  "description": "Simple relayer for scheduled payouts",
+  "main": "relayer.js",
+  "scripts": {
+    "start": "node relayer.js"
+  },
+  "dependencies": {
+    "ethers": "^6.0.0",
+    "dotenv": "^16.0.0"
+  }
+}
