@@ -1,15 +1,26 @@
-# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images
+# Images# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images# 📸 Documentation Images
 
 
 
-This folder contains visual assets for ARC Lending Protocol documentation.
+This folder contains documentation images for the ARC Lending Protocol.
 
 
+
+## AssetsThis folder contains visual assets for ARC Lending Protocol documentation.
+
+
+
+- `redalrt.png` - MetaMask red alert screenshot (before fix)
+
+- `redalrtfix.png` - MetaMask red alert screenshot (after fix)
 
 ## Current ImagesThis folder contains visual assets for ARC Lending Protocol documentation.
 
+## License
 
 
+
+All images are for documentation purposes only.
 ### MetaMask Alert Screenshots (REAL!)
 
 
