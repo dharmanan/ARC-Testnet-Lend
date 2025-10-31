@@ -19,8 +19,8 @@ This folder contains visual assets for ARC Lending Protocol documentation.
 ## How to Reference in Markdown
 
 ```markdown
-![MetaMask Red Alert Before](images/redalrt.png)
-![MetaMask Red Alert After](images/redalrtfix.png)
+![MetaMask Red Alert Before](redalrt.png)
+![MetaMask Red Alert After](redalrtfix.png)
 ```
 
 ## Available for Future Screenshots
@@ -53,12 +53,12 @@ approval-process-step1.png
 ### In Documentation
 ```markdown
 ## Before (Confusing)
-![Alert Before](images/redalrt.png)
+![Alert Before](redalrt.png)
 ```
 
 ### In README
 ```markdown
-![Demo](docs/images/redalrt.png)
+![Demo](redalrt.png)
 ```
 
 ### In Web/Blog
