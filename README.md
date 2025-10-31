@@ -1,3 +1,162 @@
+# ARC Testnet Lending Protocol
+
+A concise, production-oriented DeFi reference implementation on the Arc testnet: composable lending pools, automated market makers (AMM), and a scheduled payout manager. Built with Solidity and Foundry and accompanied by a small frontend demo.
+
+Badges: [tests status] [license]
+
+## Table of contents
+- Quick start
+- Project overview
+- Contracts & addresses
+- Tokens
+- Development
+- Security
+- Contribution
+- License & contact
+
+---
+
+## Quick start
+
+Minimal steps to get the repo running locally.
+
+Prerequisites
+- Node.js 16+ (for frontend)
+- Foundry (forge) for tests and smart contract tooling
+- Git
+
+Clone and install
+
+```bash
+git clone https://github.com/dharmanan/ARC-Testnet-Lend.git
+cd ARC-Testnet-Lend
+npm install # optional for top-level scripts
+cd frontend && npm install && cd ..
+```
+
+Configuration
+
+Make a local env copy and fill secrets in `.env` (do NOT commit `.env`):
+
+```bash
+cp .env.example .env
+# Edit .env and add your PRIVATE_KEY and RPC URL
+```
+
+Run tests
+
+```bash
+forge test -v
+```
+
+Start frontend (development)
+
+```bash
+cd frontend
+npm run dev
+# open http://localhost:5173 or the URL displayed by the dev server
+```
+
+---
+
+## Project overview
+
+This repository contains:
+
+- `src/` — Solidity contracts: LendingPool, GenericAMMPair, ScheduledPayoutManager, and mocks
+- `test/` — Foundry tests
+- `script/` — deployment and utility scripts
+- `frontend/` — React + Vite frontend demo
+
+Key components
+- LendingPool — collateralized lending/borrowing
+- GenericAMMPair — constant-product AMM pairs (x*y=k)
+- ScheduledPayoutManager — time-locked payouts
+
+---
+
+## Contracts & addresses
+
+These are the main deployed addresses on Arc testnet (as recorded in docs):
+
+| Contract | Address | Notes |
+|---|---|---|
+| LendingPool | `0x9dD7314B876fF9dFFB4F9aC4d4c8540156cf10b9` | Verified
+| AMM (ETH/WBTC) | `0xF4638B258905C6a2F7Aa71E05aAC887dB697c338` | Liquidity pair
+| AMM (ETH/ARC) | `0x677df5298Fd0a80672b1E6B4a61BEB75534a83A1` | Active
+| AMM (WBTC/ARC) | `0x27e14cfEF1a029A32F574263dce67371bce32d24` | Liquidity pair
+
+Refer to `docs/` for verification details and per-contract analysis.
+
+---
+
+## Token addresses
+
+| Token | Address |
+|---|---|
+| ETH (test) | `0x6dC1d97820974558e1bD555C04a5A19608F9512d` |
+| WBTC (test) | `0x27488Db1F8F9529B5820De984262179Ad913798E` |
+| ARC (test) | `0x56EFFB3b22DBBE576E4327D196aa5ed51476924e` |
+
+---
+
+## Development notes
+
+- Tests: run `forge test -v`. The test suite currently targets the contracts in `test/`.
+- Frontend: `cd frontend && npm run dev` — frontend reads contract addresses from environment variables (see `frontend/.env.example`).
+- Linting & formatting: use your usual Solidity/JS linters. Foundry is used for compilation/tests.
+
+Quick commands summary
+
+```bash
+# run smart contract tests
+forge test -v
+
+# frontend
+cd frontend && npm run dev
+```
+
+---
+
+## Security
+
+- Follow the principle of not storing private keys in the repo. Use `.env` for local secrets and ensure `.gitignore` contains `.env`.
+- The contracts include standard protections: reentrancy guards, access checks, and initial ratio validations. See `docs/dev-notes/` for audit and mitigation notes.
+
+If you discover a vulnerability, please open an issue or contact the maintainers privately.
+
+---
+
+## Contribution
+
+Contributions welcome. Open a PR with a clear description and tests. For substantial changes (security, protocol economics) discuss on an issue first.
+
+Suggested workflow
+
+```bash
+git checkout -b feat/my-change
+# make changes
+forge test
+git push origin feat/my-change
+# open PR
+```
+
+---
+
+## License & Contact
+
+MIT License — see `LICENSE` (if present).
+
+Maintainer: project owner (see GitHub profile)
+
+---
+
+If you'd like, I can now:
+
+1. Commit this README and push to `main` (I will do this). 
+2. Move long contract docs into `docs/` and keep README short (recommended next step).
+
+Which of the two should I do next? (I will commit README now unless you say otherwise.)
 # ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol# ARC Testnet Lending Protocol
 
 
