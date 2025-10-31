@@ -1,18 +1,216 @@
+# ARC Testnet Lending Protocol 🏦
+
+> A compact, production-oriented DeFi demo running on the Arc testnet: composable lending pools, constant-product AMM pairs, and a scheduled payout manager. Built with Solidity + Foundry and a small React frontend demo.
+
+[![Tests](https://img.shields.io/badge/tests-forge%20%7C%2020%2F20-green)](#)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen)](LICENSE)
+
+Live demo / deployment: see `DEPLOYMENT_VERIFICATION.md` and `docs/` for verification details.
+
+---
+
+## What is this?
+
+- Small but complete DeFi stack for the Arc testnet: a lending pool, three AMM pairs, and a scheduled payout manager used for demonstrations and tests.
+- Focus: clarity, test coverage (20/20), and clear docs for deploy & verification.
+
+## Quick start (2–5 minutes)
+
+Prerequisites
+
+- Node.js 16+ (frontend)
+- Foundry (forge) for contracts and tests
+- Git
+
+Clone and install
+
+```bash
+git clone https://github.com/dharmanan/ARC-Testnet-Lend.git
+cd ARC-Testnet-Lend
+cd frontend && npm ci && cd ..
+```
+
+Create `.env` from example (local only)
+
+```bash
+cp .env.example .env
+# Edit .env and add PRIVATE_KEY and RPC URL (do NOT commit .env)
+```
+
+Run tests (Foundry)
+
+```bash
+forge test -v
+# expected: 20/20 passing (see DOCUMENTATION_INDEX.md)
+```
+
+Run frontend (dev)
+
+```bash
+cd frontend
+npm run dev
+# open the dev server URL shown in the terminal
+```
+
+---
+
+## Key features
+
+- Collateralized lending (deposit / borrow / repay / withdraw)
+- Automated Market Makers (AMM) with constant-product pricing (x*y=k)
+- Three AMM pairs: ETH/WBTC, ETH/ARC, WBTC/ARC
+- Scheduled payouts manager (time-locked payouts)
+- Comprehensive Foundry tests (20/20) and contract verification reports in `docs/`
+
+## Contracts (short)
+
+| Contract | Address (Arc testnet) |
+|---|---|
+| LendingPool | `0x9dD7314B876fF9dFFB4F9aC4d4c8540156cf10b9` |
+| AMM (ETH/WBTC) | `0xF4638B258905C6a2F7Aa71E05aAC887dB697c338` |
+| AMM (ETH/ARC) | `0x677df5298Fd0a80672b1E6B4a61BEB75534a83A1` |
+| AMM (WBTC/ARC) | `0x27e14cfEF1a029A32F574263dce67371bce32d24` |
+
+Token addresses (test tokens): see `DOCUMENTATION_INDEX.md` and `docs/dev-notes/CONTRACTS_REPORT.md` for full table.
+
+---
+
+## Project structure
+
+```
+ARC-Testnet-Lend/
+├── src/                    # Solidity contracts (LendingPool, GenericAMMPair, ScheduledPayoutManager)
+├── test/                   # Foundry tests (20 total)
+├── script/                 # Deployment & utility scripts
+├── frontend/               # React + Vite demo
+├── docs/                   # User & developer docs (guides, audit notes)
+├── DOCUMENTATION_INDEX.md  # Doc index & quick links
+└── DEPLOYMENT_VERIFICATION.md # Verification guide & addresses
+```
+
+---
+
+## Documentation & developer guides
+
+- `DOCUMENTATION_INDEX.md` — start here: quick links, tests status, and deployment checklist
+- `docs/` — user-facing guides (lending, MetaMask alert guides, visuals)
+- `docs/dev-notes/` — internal developer notes and contract analysis (audit notes, function usage)
+
+Recommended reading order: `DOCUMENTATION_INDEX.md` → `docs/LENDING_POOL_GUIDE.md` → `docs/dev-notes/SMART_CONTRACT_AUDIT.md`.
+
+---
+
+## Testing & verification
+
+- Run `forge test -v` to execute the test suite. The project includes unit tests that cover AMM operations, lending flows, and scheduled payout manager.
+- Contracts verification & analysis available in `docs/dev-notes/CONTRACTS_REPORT.md` and `DEPLOYMENT_VERIFICATION.md`.
+
+## Security notes
+
+- Do NOT commit `.env` or private keys. If secrets leaked to history, perform a git history cleanup and rotate keys.
+- Contracts include standard protections (reentrancy guards, role/access checks, initial liquidity bounds). See `docs/dev-notes/SMART_CONTRACT_AUDIT.md` for details.
+
+---
+
+## Contributing
+
+Please open issues or PRs. For protocol-level changes (economics, formal verification), open an issue first to discuss design and tests.
+
+Suggested workflow
+
+```bash
+git checkout -b feat/my-change
+# implement and test
+forge test
+git push origin feat/my-change
+# open PR
+```
+
+---
+
+## Tech stack
+
+- Solidity + Foundry (contracts & tests)
+- React + Vite (frontend)
+- ethers.js (frontend interactions)
+
+---
+
+## Contact
+
+Open issues on GitHub for questions or report security concerns privately to the repository owner.
+
+---
+
+If you want, I can now:
+
+1. polish this README further (add badges, deployment links), or
+2. extract large contract docs into a single `docs/CONTRACTS.md` and keep README minimal.
+
+Which should I do next? Reply with `1` or `2` (or describe changes).
 # ARC Testnet Lending Protocol
 
-A concise, production-oriented DeFi reference implementation on the Arc testnet: composable lending pools, automated market makers (AMM), and a scheduled payout manager. Built with Solidity and Foundry and accompanied by a small frontend demo.
+Small, focused repo for a DeFi lending demo on the Arc testnet. Contains Solidity contracts, Foundry tests, and a small React frontend demo.
 
-Badges: [tests status] [license]
+## Quick start (30s)
 
-## Table of contents
-- Quick start
-- Project overview
-- Contracts & addresses
-- Tokens
-- Development
-- Security
-- Contribution
-- License & contact
+Prerequisites
+
+- Node.js 16+ (frontend)
+- Foundry (forge) for tests
+- Git
+
+Clone and install
+
+```bash
+git clone https://github.com/dharmanan/ARC-Testnet-Lend.git
+cd ARC-Testnet-Lend
+cd frontend && npm ci && cd ..
+```
+
+Configure (local only)
+
+```bash
+cp .env.example .env
+# Edit .env and add your PRIVATE_KEY and RPC URL (do NOT commit .env)
+```
+
+Run tests
+
+```bash
+forge test -v
+```
+
+Run frontend
+
+```bash
+cd frontend
+npm run dev
+# open the dev server URL shown in the terminal
+```
+
+## Contracts (short)
+
+| Contract | Address |
+|---|---|
+| LendingPool | `0x9dD7314B876fF9dFFB4F9aC4d4c8540156cf10b9` |
+| AMM (ETH/WBTC) | `0xF4638B258905C6a2F7Aa71E05aAC887dB697c338` |
+| AMM (ETH/ARC) | `0x677df5298Fd0a80672b1E6B4a61BEB75534a83A1` |
+
+For full contract notes and verification details, see the `docs/` folder.
+
+## Notes & security
+
+- Never commit private keys or secrets. Use `.env` and keep it in `.gitignore`.
+- This repo contains example deployments on Arc testnet. Use test funds only.
+
+## Contributing
+
+Open issues or PRs. For protocol changes open an issue first to discuss.
+
+---
+
+License: MIT (if a LICENSE file exists)
 
 ---
 
