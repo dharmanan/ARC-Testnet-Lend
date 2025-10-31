@@ -2,19 +2,50 @@
 
 This folder contains visual assets for ARC Lending Protocol documentation.
 
-## Current Images
+## ⚠️ Image Files Temporarily Removed
 
-### MetaMask Alert Screenshots (REAL!)
+The PNG image files (`redalrt.png` and `redalrtfix.png`) have been temporarily removed from this repository due to GitHub display issues with binary files.
 
-✅ **redalrt.png** (1200x800px)
-   - Red alert WITHOUT warning banner
-   - Shows what users see when confused
-   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)
+### What Was Here Before:
+- **redalrt.png**: MetaMask red alert WITHOUT warning banner
+- **redalrtfix.png**: MetaMask red alert WITH warning banner
 
-✅ **redalrtfix.png** (1200x800px)
-   - Red alert WITH warning banner
-   - Shows what users see when informed
-   - Used in: METAMASK_RED_ALERT_RPC_DELAY.md (Visual Guide section)
+### 🔄 To Restore Images:
+If you need these images, they can be re-added by:
+1. Taking new screenshots of MetaMask alerts
+2. Optimizing images to under 100KB each
+3. Using web-safe formats (PNG-24 recommended)
+
+## How to Reference in Markdown
+
+```markdown
+![MetaMask Red Alert Before](redalrt.png)
+![MetaMask Red Alert After](redalrtfix.png)
+```
+
+## Available for Future Screenshots
+
+When adding more images, use this structure:
+
+### Naming Convention
+```
+[feature]-[scenario]-[state].png
+metamask-alert-before.png
+swap-page-after.png
+approval-process-step1.png
+```
+
+### Recommended Format
+- Format: PNG-24 (supports transparency)
+- Size: Max 1200x800px (mobile-friendly)
+- DPI: 72 (web standard)
+- Quality: Maximum compression without losing clarity
+
+## Current Status
+
+- ❌ Red alert screenshots (temporarily removed due to GitHub issues)
+- ⏳ Swap page banner screenshots (optional)
+- ⏳ Annotated versions with labels (optional)
 
 ## How to Reference in Markdown
 
