@@ -25,171 +25,224 @@ Prerequisites
 Clone and install
 
 ```bash
-git clone https://github.com/dharmanan/ARC-Testnet-Lend.git
-cd ARC-Testnet-Lend
-cd frontend && npm ci && cd ..
-```
+ # ARC Testnet Lending Protocol 🏦
 
-Create `.env` from example (local only)
+ > A compact, production-oriented DeFi demo running on the Arc testnet: composable lending pools, constant-product AMM pairs, and a scheduled payout manager. Built with Solidity + Foundry and a small React frontend demo.
 
-```bash
-cp .env.example .env
-# Edit .env and add PRIVATE_KEY and RPC URL (do NOT commit .env)
-```
+ [![Tests](https://img.shields.io/badge/tests-forge%20%7C%2020%2F20-green)](#)
+ [![License](https://img.shields.io/badge/license-MIT-brightgreen)](LICENSE)
 
-Run tests (Foundry)
+ Live demo / deployment: see `DEPLOYMENT_VERIFICATION.md` and `docs/` for verification details.
 
-```bash
-forge test -v
-# expected: 20/20 passing (see DOCUMENTATION_INDEX.md)
-```
+ ---
 
-Run frontend (dev)
+ ## What is this?
 
-```bash
-cd frontend
-npm run dev
-# open the dev server URL shown in the terminal
-```
+ - Small but complete DeFi stack for the Arc testnet: a lending pool, three AMM pairs, and a scheduled payout manager used for demonstrations and tests.
+ - Focus: clarity, test coverage (20/20), and clear docs for deploy & verification.
 
----
+ ## Quick start (2–5 minutes)
 
-## Key features
+ Prerequisites
 
-- Collateralized lending (deposit / borrow / repay / withdraw)
-- Automated Market Makers (AMM) with constant-product pricing (x*y=k)
-- Three AMM pairs: ETH/WBTC, ETH/ARC, WBTC/ARC
-- Scheduled payouts manager (time-locked payouts)
-- Comprehensive Foundry tests (20/20) and contract verification reports in `docs/`
+ - Node.js 16+ (frontend)
+ - Foundry (forge) for contracts and tests
+ - Git
 
-## Contracts (short)
+ Clone and install
 
-| Contract | Address (Arc testnet) |
-|---|---|
-| LendingPool | `0x9dD7314B876fF9dFFB4F9aC4d4c8540156cf10b9` |
-| AMM (ETH/WBTC) | `0xF4638B258905C6a2F7Aa71E05aAC887dB697c338` |
-| AMM (ETH/ARC) | `0x677df5298Fd0a80672b1E6B4a61BEB75534a83A1` |
-| AMM (WBTC/ARC) | `0x27e14cfEF1a029A32F574263dce67371bce32d24` |
+ ```bash
+ git clone https://github.com/dharmanan/ARC-Testnet-Lend.git
+ cd ARC-Testnet-Lend
+ cd frontend && npm ci && cd ..
+ ```
 
-Token addresses (test tokens): see `DOCUMENTATION_INDEX.md` and `docs/dev-notes/CONTRACTS_REPORT.md` for full table.
+ Create `.env` from example (local only)
 
----
+ ```bash
+ cp .env.example .env
+ # Edit .env and add PRIVATE_KEY and RPC URL (do NOT commit .env)
+ ```
+
+ Run tests (Foundry)
+
+ ```bash
+ forge test -v
+ # expected: 20/20 passing (see DOCUMENTATION_INDEX.md)
+ ```
+
+ Run frontend (dev)
+
+ ```bash
+ cd frontend
+ npm run dev
+ # open the dev server URL shown in the terminal
+ ```
+
+ ---
+
+ ## Key features
+
+ - Collateralized lending (deposit / borrow / repay / withdraw)
+ - Automated Market Makers (AMM) with constant-product pricing (x*y=k)
+ - Three AMM pairs: ETH/WBTC, ETH/ARC, WBTC/ARC
+ - Scheduled payouts manager (time-locked payouts)
+ - Comprehensive Foundry tests (20/20) and contract verification reports in `docs/`
+
+ ## Contracts (short)
+
+ | Contract | Address (Arc testnet) |
+ |---|---|
+ | LendingPool | `0x9dD7314B876fF9dFFB4F9aC4d4c8540156cf10b9` |
+ | AMM (ETH/WBTC) | `0xF4638B258905C6a2F7Aa71E05aAC887dB697c338` |
+ | AMM (ETH/ARC) | `0x677df5298Fd0a80672b1E6B4a61BEB75534a83A1` |
+ | AMM (WBTC/ARC) | `0x27e14cfEF1a029A32F574263dce67371bce32d24` |
+
+ Token addresses (test tokens): see `DOCUMENTATION_INDEX.md` and `docs/dev-notes/CONTRACTS_REPORT.md` for full table.
+
+ ---
+
+ ## Project structure
+
+ ```
+ ARC-Testnet-Lend/
+ ├── src/                    # Solidity contracts (LendingPool, GenericAMMPair, ScheduledPayoutManager)
+ ├── test/                   # Foundry tests (20 total)
+ ├── script/                 # Deployment & utility scripts
+ ├── frontend/               # React + Vite demo
+ ├── docs/                   # User & developer docs (guides, audit notes)
+ ├── DOCUMENTATION_INDEX.md  # Doc index & quick links
+ └── DEPLOYMENT_VERIFICATION.md # Verification guide & addresses
+ ```
+
+ ---
+
+ ## Documentation & developer guides
+
+ - `DOCUMENTATION_INDEX.md` — start here: quick links, tests status, and deployment checklist
+ - `docs/` — user-facing guides (lending, MetaMask alert guides, visuals)
+ - `docs/dev-notes/` — internal developer notes and contract analysis (audit notes, function usage)
+
+ Recommended reading order: `DOCUMENTATION_INDEX.md` → `docs/LENDING_POOL_GUIDE.md` → `docs/dev-notes/SMART_CONTRACT_AUDIT.md`.
+
+ ---
+
+ ## Example flow (user perspective)
+
+ 1. Connect MetaMask → choose testnet
+ 2. Deposit collateral (ETH/WBTC/ARC) into LendingPool
+ 3. Borrow against collateral
+ 4. View health factor and repay when ready
+
+ ---
+
+ ## Testing & verification
+
+ - Run `forge test -v` to execute the test suite. The project includes unit tests that cover AMM operations, lending flows, and scheduled payout manager.
+ - Contracts verification & analysis available in `docs/dev-notes/CONTRACTS_REPORT.md` and `DEPLOYMENT_VERIFICATION.md`.
+
+ ## Security notes
+
+ - Do NOT commit `.env` or private keys. If secrets leaked to history, perform a git history cleanup and rotate keys.
+ - Contracts include standard protections (reentrancy guards, role/access checks, initial liquidity bounds). See `docs/dev-notes/SMART_CONTRACT_AUDIT.md` for details.
+
+ ---
+
+ ## Contributing
+
+ Please open issues or PRs. For protocol-level changes (economics, formal verification), open an issue first to discuss design and tests.
+
+ Suggested workflow
+
+ ```bash
+ git checkout -b feat/my-change
+ # implement and test
+ forge test
+ git push origin feat/my-change
+ # open PR
+ ```
+
+ ---
+
+ ## Tech stack
+
+ - Solidity + Foundry (contracts & tests)
+ - React + Vite (frontend)
+ - ethers.js (frontend interactions)
+
+ ---
+
+ ## Contact
+
+ Open issues on GitHub for questions or report security concerns privately to the repository owner.
+
+ ---
+
+ If you want further changes, reply with details (badges, example snippets, or bilingual README).
+2. Deposit WBTC as collateral into the LendingPool
+3. Borrow ARC tokens against collateral
+4. Use AMM to swap collateral or repay loans
+5. Schedule a payout with the ScheduledPayoutManager
+
+The `frontend/` contains example UI components and scripts to perform these flows. See `docs/LENDING_POOL_GUIDE.md` for UI screenshots and MetaMask tips.
+
+## Contracts & important addresses
+
+See `docs/dev-notes/CONTRACTS_REPORT.md` for the full verification table. Key contracts include:
+
+- LendingPool — core lending/borrowing logic
+- GenericAMMPair — constant-product AMM pair implementation
+- ScheduledPayoutManager — time-locked payout contracts
+
+Contract addresses used in examples (testnet): see `DOCUMENTATION_INDEX.md` and `docs/dev-notes/CONTRACTS_REPORT.md`.
 
 ## Project structure
 
 ```
-ARC-Testnet-Lend/
-├── src/                    # Solidity contracts (LendingPool, GenericAMMPair, ScheduledPayoutManager)
-├── test/                   # Foundry tests (20 total)
-├── script/                 # Deployment & utility scripts
-├── frontend/               # React + Vite demo
-├── docs/                   # User & developer docs (guides, audit notes)
-├── DOCUMENTATION_INDEX.md  # Doc index & quick links
-└── DEPLOYMENT_VERIFICATION.md # Verification guide & addresses
+/
+├─ contracts/                # Solidity contracts (Foundry)
+├─ script/                   # Deploy & helper scripts
+├─ test/                     # Foundry tests
+├─ frontend/                 # React + Vite demo
+├─ docs/                     # User guides and images
+├─ docs/dev-notes/           # Internal audit notes and reports
+├─ .env.example              # Example env with RPC and contract vars
+└─ README.md
 ```
+
+## Developer notes
+
+- Build & test: `forge build && forge test -v`
+- Run frontend: `cd frontend && npm run dev`
+- To run a single test file with verbose output: `forge test --match-path test/MyTest.t.sol -v`
+
+Deployment and verification steps are in `DEPLOYMENT_VERIFICATION.md`.
+
+## Security & secrets
+
+- Never commit your `.env` file or private keys. If a key is ever committed, rotate it and remove it from history (eg. with `git filter-repo` or BFG).
+- Contracts were written with basic protections (reentrancy guards, access control). See `docs/dev-notes/SMART_CONTRACT_AUDIT.md` for details.
+
+If you find a security issue, report privately and rotate all affected keys immediately.
+
+## Contribution & support
+
+Contributions welcome. Open an issue or a PR. For quick help, mention the failing command or test and include logs.
+
+## License
+
+MIT License — see `LICENSE`.
 
 ---
 
-## Documentation & developer guides
+## Choose next action
 
-- `DOCUMENTATION_INDEX.md` — start here: quick links, tests status, and deployment checklist
-- `docs/` — user-facing guides (lending, MetaMask alert guides, visuals)
-- `docs/dev-notes/` — internal developer notes and contract analysis (audit notes, function usage)
+1. Add CI badges and verification status to the top of this README (adds GitHub Actions + status badges) — reply `1`.
+2. Extract all contract analysis into a single `docs/CONTRACTS.md` and keep README small — reply `2`.
+3. Produce a short `README_LITE.md` for the repo listing and keep the long-form docs inside `docs/` — reply `3`.
 
-Recommended reading order: `DOCUMENTATION_INDEX.md` → `docs/LENDING_POOL_GUIDE.md` → `docs/dev-notes/SMART_CONTRACT_AUDIT.md`.
+Reply with the number of the option you'd like and I will implement it.
 
----
-
-## Testing & verification
-
-- Run `forge test -v` to execute the test suite. The project includes unit tests that cover AMM operations, lending flows, and scheduled payout manager.
-- Contracts verification & analysis available in `docs/dev-notes/CONTRACTS_REPORT.md` and `DEPLOYMENT_VERIFICATION.md`.
-
-## Security notes
-
-- Do NOT commit `.env` or private keys. If secrets leaked to history, perform a git history cleanup and rotate keys.
-- Contracts include standard protections (reentrancy guards, role/access checks, initial liquidity bounds). See `docs/dev-notes/SMART_CONTRACT_AUDIT.md` for details.
-
----
-
-## Contributing
-
-Please open issues or PRs. For protocol-level changes (economics, formal verification), open an issue first to discuss design and tests.
-
-Suggested workflow
-
-```bash
-git checkout -b feat/my-change
-# implement and test
-forge test
-git push origin feat/my-change
-# open PR
-```
-
----
-
-## Tech stack
-
-- Solidity + Foundry (contracts & tests)
-- React + Vite (frontend)
-- ethers.js (frontend interactions)
-
----
-
-## Contact
-
-Open issues on GitHub for questions or report security concerns privately to the repository owner.
-
----
-
-If you want, I can now:
-
-1. polish this README further (add badges, deployment links), or
-2. extract large contract docs into a single `docs/CONTRACTS.md` and keep README minimal.
-
-Which should I do next? Reply with `1` or `2` (or describe changes).
-# ARC Testnet Lending Protocol
-
-Small, focused repo for a DeFi lending demo on the Arc testnet. Contains Solidity contracts, Foundry tests, and a small React frontend demo.
-
-## Quick start (30s)
-
-Prerequisites
-
-- Node.js 16+ (frontend)
-- Foundry (forge) for tests
-- Git
-
-Clone and install
-
-```bash
-git clone https://github.com/dharmanan/ARC-Testnet-Lend.git
-cd ARC-Testnet-Lend
-cd frontend && npm ci && cd ..
-```
-
-Configure (local only)
-
-```bash
-cp .env.example .env
-# Edit .env and add your PRIVATE_KEY and RPC URL (do NOT commit .env)
-```
-
-Run tests
-
-```bash
-forge test -v
-```
-
-Run frontend
-
-```bash
-cd frontend
-npm run dev
-# open the dev server URL shown in the terminal
-```
-
-## Contracts (short)
 
 | Contract | Address |
 |---|---|
