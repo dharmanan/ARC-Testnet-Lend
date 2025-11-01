@@ -4,6 +4,18 @@ Complete DeFi ecosystem on Arc blockchain: lending pools, AMMs, and scheduled pa
 
 [![Tests](https://img.shields.io/badge/tests-20%2F20-green)](#) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
+## ⚠️ Testnet & MVP Notice
+
+**This is a testnet MVP (Minimum Viable Product) — not production-ready.**
+
+- 🧪 **Testnet Only**: Deployed on Arc Testnet only
+- 💰 **Test Funds Only**: Use testnet funds exclusively (no real assets)
+- 🚀 **MVP Status**: Core features complete but requires security audit before mainnet
+- 📋 **For Development & Testing**: Learning DeFi mechanics, protocol testing, and demos
+
+**Do NOT use with mainnet tokens or real funds.**
+
+---
 
 ## Overview
 
@@ -133,10 +145,11 @@ Refer to [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for more development w
 
 ## Security
 
+- ⚠️ **Testnet only** — do not use with real funds or mainnet tokens
+- Use only testnet wallet (create new wallet for testing)
+- Never commit `.env` or private keys — use testnet secrets only
 - Reentrancy guards & access controls (OpenZeppelin)
-- Never commit `.env` or private keys
-- Use testnet funds only
-- See [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) for details
+- See [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) for security details
 
 ## Troubleshooting & Known Issues
 
