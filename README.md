@@ -62,6 +62,39 @@ cd frontend && npm run dev
 # Open http://localhost:3000, connect MetaMask to Arc Testnet (Chain ID: 5042002)
 ```
 
+## Setting Up a Testnet Wallet
+
+Create a new testnet wallet using Foundry's `cast` command:
+
+```bash
+cast wallet new
+```
+
+Output example:
+```
+Successfully created new keypair.
+Address:     0xB815A0c4bC23930119324d4359dB65e27A846A2d
+Private key: 0xcc1b30a6af68ea9a9917f1dd••••••••••••••••••••••••••••••••••••••97c5
+```
+
+**⚠️ Important:**
+- Keep your private key **secure** — never share it or commit it to source control
+- Add the private key to `.env`:
+
+```bash
+PRIVATE_KEY="0xcc1b30a6af68ea9a9917f1dd••••••••••••••••••••••••••••••••••••••97c5"
+```
+
+Then reload your environment:
+
+```bash
+source .env
+```
+
+**Get testnet funds:**
+- Request faucet tokens from [Arc Testnet Faucet](https://faucet.arc.io/) (or equivalent)
+- Use only testnet addresses and funds for testing
+
 ## Smart Contracts
 
 | Contract | Address |
