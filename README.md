@@ -50,14 +50,14 @@ cd ARC-Testnet-Lend
 # Install frontend
 cd frontend && npm install && cd ..
 
-# Setup env (do NOT commit)
+# Create .env file (do NOT commit)
 cp .env.example .env
-# Add PRIVATE_KEY and ARC_TESTNET_RPC_URL
+# Edit .env and add: PRIVATE_KEY and ARC_TESTNET_RPC_URL
 
 # Run tests
 forge test -v
 
-# Start UI
+# Start frontend UI
 cd frontend && npm run dev
 # Open http://localhost:3000, connect MetaMask to Arc Testnet (Chain ID: 5042002)
 ```
