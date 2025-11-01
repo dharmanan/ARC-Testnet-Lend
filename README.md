@@ -105,17 +105,31 @@ See [ROADMAP.md](ROADMAP.md) for planned features, phases, and known limitations
 - [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) — security details
 - [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md) — deployment & verification
 
-## Roadmap
-
-See [ROADMAP.md](ROADMAP.md) for planned features, phases, and future work.
-
 ## Development
 
+Build and test the protocol locally:
+
 ```bash
+# Build contracts
 forge build
+
+# Run all tests (20 tests)
 forge test -v
+
+# Run specific test file
 forge test --match-path test/Contracts.t.sol -v
 ```
+
+Refer to [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for more development workflows and debugging steps.
+
+## Tech Stack
+
+- **Smart Contracts**: Solidity 0.8.20 + OpenZeppelin Contracts
+- **Testing**: Foundry + Solc 0.8.20
+- **Frontend**: React + TypeScript + Vite
+- **Styling**: Tailwind CSS
+- **Blockchain**: Arc Testnet
+- **RPC Integration**: ethers.js
 
 ## Security
 
