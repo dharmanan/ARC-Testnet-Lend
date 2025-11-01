@@ -110,24 +110,24 @@
 
 **Timeline:**
 
-1. **T=0s**: Kullanıcı "Swap" tuşuna tıklar → MetaMask işlemi alır
-2. **T=0-1s**: MetaMask, RPC provider'ından fee hesaplamasını ister
-   - Gas tahmini yap
-   - Mevcut gas price'ı al
-   - Toplam fee'yi hesapla
-3. **T=1-2s**: Eğer RPC yavaşsa, MetaMask **KIRMIZI UYARI** gösterir
-   - "Network fee verification in progress" mesajı
-4. **T=5-10s**: RPC sonunda cevap veriyor ✓
-   - Gas estimate geldi
-   - Gas price geldi
-   - Fee hesaplandı
-5. **T=10s+**: **KIRMIZI UYARI KAYBOLUR** ✓
-   - "Sign" butonu görünür
-   - Tüm bilgiler doğru gösterilir
+1. **T=0s**: User clicks "Swap" button → MetaMask receives transaction
+2. **T=0-1s**: MetaMask requests fee calculation from RPC provider
+   - Estimate gas needed
+   - Get current gas price
+   - Calculate total fee
+3. **T=1-2s**: If RPC is slow, MetaMask shows **RED ALERT**
+   - "Network fee verification in progress" message
+4. **T=5-10s**: RPC finally responds ✓
+   - Gas estimate received
+   - Gas price received
+   - Fee calculated
+5. **T=10s+**: **RED ALERT DISAPPEARS** ✓
+   - "Sign" button appears
+   - All data shows correctly
    - Network fee: 0.0079 USDC
-6. **T=10s+**: Kullanıcı "Sign"e tıklar
-   - İşlem imzalanır ve gönderilir
-   - Onaylama tamamlanır ✓
+6. **T=10s+**: User clicks "Sign"
+   - Transaction signed and sent
+   - Approval completes ✓
 
 ---
 
