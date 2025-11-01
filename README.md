@@ -47,14 +47,36 @@ cd frontend && npm run dev
 Token addresses: [CONTRACTS_REPORT.md](docs/dev-notes/CONTRACTS_REPORT.md)
 
 
+
 ## Project Structure
 
 ```
-src/          # Solidity (LendingPool, GenericAMMPair, ScheduledPayoutManager)
-test/         # Foundry tests (20 passing)
-script/       # Deploy & utility scripts
-frontend/     # React + Vite UI
-docs/         # Guides & audit notes
+ARC-Testnet-Lend/
+├── src/                # Solidity contracts
+│   ├── LendingPool.sol
+│   ├── GenericAMMPair.sol
+│   ├── ScheduledPayoutManager.sol
+│   └── ...
+├── test/               # Foundry tests
+│   └── Contracts.t.sol
+├── script/             # Deployment & helper scripts
+│   ├── Deploy.s.sol
+│   ├── AddLiquidity.s.sol
+│   └── ...
+├── frontend/           # React + Vite frontend
+│   ├── App.tsx, index.tsx, ...
+│   ├── components/
+│   └── assets/
+├── docs/               # Guides, user & dev docs
+│   ├── LENDING_POOL_GUIDE.md
+│   ├── dev-notes/
+│   └── images/
+├── ROADMAP.md          # Project roadmap
+├── DEPLOYMENT_VERIFICATION.md
+├── DOCUMENTATION_INDEX.md
+├── LICENSE             # MIT License
+├── README.md           # This file
+└── ...
 ```
 
 ## Roadmap
