@@ -32,7 +32,7 @@ forge test -v
 
 # Start UI
 cd frontend && npm run dev
-# Open http://localhost:5173, connect MetaMask to Arc Testnet (Chain ID: 656476)
+# Open http://localhost:3000, connect MetaMask to Arc Testnet (Chain ID: 5042002)
 ```
 
 ## Smart Contracts
@@ -46,6 +46,7 @@ cd frontend && npm run dev
 
 Token addresses: [CONTRACTS_REPORT.md](docs/dev-notes/CONTRACTS_REPORT.md)
 
+
 ## Project Structure
 
 ```
@@ -56,12 +57,20 @@ frontend/     # React + Vite UI
 docs/         # Guides & audit notes
 ```
 
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for planned features, phases, and known limitations.
+
 ## Documentation
 
 - [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) — quick links & overview
 - [LENDING_POOL_GUIDE.md](docs/LENDING_POOL_GUIDE.md) — user guide with UI walkthrough
 - [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) — security details
 - [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md) — deployment & verification
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for planned features, phases, and future work.
 
 ## Development
 
