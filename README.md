@@ -124,6 +124,12 @@ forge test --match-path test/Contracts.t.sol -v
 - Use testnet funds only
 - See [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) for details
 
+## Troubleshooting & Known Issues
+
+- **MetaMask Red Alert**: RPC latency warning (not a security issue). See [METAMASK_RED_ALERT_RPC_DELAY.md](docs/METAMASK_RED_ALERT_RPC_DELAY.md)
+- **Transaction Delays**: Arc Testnet RPC may be slow. Wait 5-10 seconds and refresh.
+- **Contract Issues**: Check [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) for known limitations
+
 ## Contributing
 
 Open issues or PRs. For protocol changes, discuss in an issue first.
@@ -141,3 +147,4 @@ MIT — [LICENSE](LICENSE)
 ---
 
 For detailed guides, UI screenshots, and implementation details, see [`docs/`](docs/).
+````

@@ -624,7 +624,31 @@ Before deploying to mainnet, ensure:
 
 ---
 
-## 📚 References
+## � MetaMask Red Alert Issue
+
+When interacting with the protocol via MetaMask, users may see a **red alert warning** during transactions. This is a **known RPC delay issue** and not a security vulnerability.
+
+### Problem Visualization
+
+**Before Fix (Red Alert)**
+![Red Alert](images/redalrt.png)
+
+**After ~5-10 Seconds (Normal State)**
+![Fixed State](images/redalrtfix.png)
+
+### Root Cause
+- Arc Testnet RPC experiences occasional latency
+- MetaMask shows red warning when response is delayed
+- Transaction eventually succeeds after RPC responds
+
+### Solution
+- Wait 5-10 seconds and refresh the page
+- Check transaction status on block explorer
+- See [METAMASK_RED_ALERT_RPC_DELAY.md](../METAMASK_RED_ALERT_RPC_DELAY.md) for detailed troubleshooting
+
+---
+
+## �📚 References
 
 - [ROADMAP_V0.2_INTEREST_ACCRUAL.md](./ROADMAP_V0.2_INTEREST_ACCRUAL.md)
 - [Uniswap v2 Documentation](https://docs.uniswap.org/protocol/V2/concepts/core-concepts)
@@ -636,3 +660,5 @@ Before deploying to mainnet, ensure:
 *Audit conducted: October 31, 2025*  
 *Auditor: GitHub Copilot*  
 *Status: For Testnet Review*
+
+```
