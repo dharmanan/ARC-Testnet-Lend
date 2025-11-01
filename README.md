@@ -25,6 +25,12 @@ Complete DeFi ecosystem on Arc blockchain: lending pools, AMMs, and scheduled pa
 - **Frontend Demo**: React UI for protocol interaction
 - All contracts verified and audited on Arc Testnet
 
+## 🚀 Live Demo
+
+**Frontend Application**: [https://arclending.vercel.app/](https://arclending.vercel.app/)
+
+Connect your Arc Testnet wallet and start interacting with the protocol!
+
 ## Application Screenshots
 
 **Dashboard**
@@ -38,6 +44,14 @@ Complete DeFi ecosystem on Arc blockchain: lending pools, AMMs, and scheduled pa
 **History (Transactions)**
 
 ![History](docs/images/history.png)
+
+## Quick Links
+
+- 🌐 **[Live Application](https://arclending.vercel.app/)** - Try the lending protocol now
+- 📖 **[Developer Docs](docs/)** - Smart contract details and architecture
+- 🔐 **[Security Audit](docs/dev-notes/SMART_CONTRACT_AUDIT.md)** - Contract security review
+- 🛣️ **[Roadmap](ROADMAP.md)** - Future features and phases
+- 🐛 **[Troubleshooting](docs/dev-notes/METAMASK_RED_ALERT_RPC_DELAY.md)** - Common issues and solutions
 
 ## Quick Start
 
