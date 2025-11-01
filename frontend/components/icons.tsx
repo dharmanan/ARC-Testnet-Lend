@@ -3,7 +3,7 @@ import React from 'react';
 
 export const ArcIcon = ({ className = 'w-auto h-8' }: { className?: string }) => (
   <img 
-    src={`/assets/arc.png?t=${Date.now()}`}
+    src="/arc.png"
     alt="ARC" 
     className={className} 
     style={{ objectFit: 'contain' }} 
@@ -23,7 +23,7 @@ export const EthIcon = ({ className = 'w-6 h-6' }: { className?: string }) => (
 
 export const BtcIcon = ({ className = 'w-6 h-6' }: { className?: string }) => (
     <img 
-        src={`/assets/btc.png?t=${Date.now()}`}
+        src="/btc.png"
         alt="BTC" 
         className={className} 
         style={{ objectFit: 'contain' }} 
@@ -31,7 +31,7 @@ export const BtcIcon = ({ className = 'w-6 h-6' }: { className?: string }) => (
 );
 
 export const UsdcIcon = ({ className = 'w-6 h-6' }: { className?: string }) => (
-    <img src="/assets/usdc.png" alt="USDC" className={className} style={{ objectFit: 'contain' }} />
+    <img src="/usdc.png" alt="USDC" className={className} style={{ objectFit: 'contain' }} />
 );
 
 export const EurcIcon = ({ className = 'w-6 h-6' }: { className?: string }) => (
