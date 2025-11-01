@@ -425,7 +425,40 @@ A: Gas cost for the approval transaction. It varies based on network conditions.
 
 ---
 
-## 🔗 Related Documentation
+## �️ Visual Guide: Before & After
+
+### The Problem (What Users See WITHOUT Warning)
+
+![MetaMask Red Alert Before](../docs/images/redalrt.png)
+
+*Red alert appears suddenly with NO context. User sees:*
+- 🔴 Red warning/alert badge
+- "Network fee verification in progress" or similar
+- No explanation of what's happening
+- Natural reaction: **Panic → Cancel → Fail**
+
+### The Solution (What Users See WITH Warning)
+
+![MetaMask Red Alert After](../docs/images/redalrtfix.png)
+
+*SAME red alert, but user sees our warning banner FIRST. User knows:*
+- 🟢 This is expected
+- 🟢 It's temporary (5-10 seconds)
+- 🟢 Just wait and proceed
+- Natural reaction: **Informed → Wait → Success**
+
+### Key Difference
+
+| Aspect | BEFORE | AFTER |
+|--------|--------|-------|
+| **User Expectation** | ❓ Confused | ✅ Prepared |
+| **Alert Appears** | 😱 Shocking | 😌 Expected |
+| **User Action** | ❌ Cancel | ✅ Wait |
+| **Outcome** | ❌ FAIL | ✅ SUCCESS |
+
+---
+
+## �🔗 Related Documentation
 
 - `QUICK_REFERENCE_RED_ALERT.md` - Quick 2-minute answer
 - `QUICK_REFERENCE_NFT_MESSAGE.md` - MetaMask generic templates
@@ -434,4 +467,9 @@ A: Gas cost for the approval transaction. It varies based on network conditions.
 - `WBTC_ARC_APPROVAL_EXPLAINED.md` - Blockchain approval mechanics
 
 ---
+
+**Status**: ✅ DOCUMENTED & VISUALIZED
+**Severity**: 🟡 Minor (UX issue, not functional)
+**Impact**: Users confused, but doesn't affect transactions
+**Fix**: Wait 5-10 seconds, proceed normally
 
