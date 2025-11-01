@@ -61,7 +61,7 @@ cd frontend && npm run dev
 # Open http://localhost:3000, connect MetaMask to Arc Testnet (Chain ID: 5042002)
 ```
 
-⚠️ **Important**: Edit `.env` and add your `PRIVATE_KEY` and `ARC_TESTNET_RPC_URL`. **Never commit `.env` to git** — it contains secrets.
+⚠️ **Important**: Edit `.env` and add your `PRIVATE_KEY` and `ARC_TESTNET_RPC_URL`. **Never commit `.env` to git** it contains secrets.
 
 ## Setting Up a Testnet Wallet
 
