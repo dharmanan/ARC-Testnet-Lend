@@ -93,7 +93,7 @@ source .env
 ```
 
 **Get testnet funds:**
-- Request faucet tokens from [Arc Testnet Faucet](https://faucet.arc.io/) (or equivalent)
+- Request faucet tokens from [Arc Testnet Faucet](https://faucet.circle.com/) (or equivalent)
 - Use only testnet addresses and funds for testing
 
 ## Smart Contracts
