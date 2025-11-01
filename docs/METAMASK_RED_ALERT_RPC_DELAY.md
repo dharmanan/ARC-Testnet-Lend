@@ -11,27 +11,20 @@
 
 ### MetaMask Signature Request with Red Alert
 
-```
-┌───────────────────────────────────────────────────────┐
-│ Signature Request                                     │
-├───────────────────────────────────────────────────────┤
-│                                                        │
-│ 🔴 RED ALERT or WARNING:                              │
-│    "Network fee verification in progress"             │
-│    or similar message                                 │
-│                                                        │
-│ From:    0xABC...XYZ                                 │
-│ To:      Swap Pair Contract                         │
-│ Method:  approve()                                   │
-│                                                        │
-│ Data:    0x095ea7b3...                              │
-│                                                        │
-│ [Reject]  [Wait...]  [Later]                        │
-│                                                        │
-└───────────────────────────────────────────────────────┘
+**Screen shows:**
 
-User reaction: "Why is there a red alert?" (Alert, not panic)
-```
+| Field | Content |
+|-------|---------|
+| **Title** | Signature Request |
+| **Status** | 🔴 RED ALERT or WARNING |
+| **Message** | "Network fee verification in progress" (or similar) |
+| **From** | 0xABC...XYZ (your wallet) |
+| **To** | Swap Pair Contract |
+| **Method** | `approve()` |
+| **Data** | 0x095ea7b3... |
+| **Actions** | [Reject] [Wait...] [Later] |
+
+**User reaction**: "Why is there a red alert?" (Alert, not panic)
 
 ---
 
@@ -115,56 +108,26 @@ User reaction: "Why is there a red alert?" (Alert, not panic)
 
 ### Network Fee Verification Flow (Diagram)
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                   User Clicks "Swap"                    │
-└────────────┬────────────────────────────────────────────┘
-             │
-             ↓ (T=0s)
-     ┌───────────────┐
-     │ MetaMask      │
-     │ Receives TX   │
-     └───────┬───────┘
-             │
-             ↓ (T=0s)
-┌────────────────────────────────────────┐
-│ MetaMask calculates fee with RPC:      │
-│ - Estimate gas needed                  │
-│ - Get current gas price                │
-│ - Calculate total fee                  │
-│ - Verify all transaction params        │
-└────────┬───────────────────────────────┘
-         │
-         ↓ (T=1-2s)
-┌────────────────────────────────────────┐
-│ Shows RED ALERT (still calculating)    │
-│ "Network fee verification in progress" │
-└────────┬───────────────────────────────┘
-         │
-         ↓ (T=5-10s) ⏳
-┌────────────────────────────────────────┐
-│ RPC finally responds with fee ✓        │
-│ MetaMask receives:                     │
-│ - Gas estimate                         │
-│ - Gas price                            │
-│ - Total fee calculated                 │
-│ - Ready to display & sign              │
-└────────┬───────────────────────────────┘
-         │
-         ↓ (T=10s)
-┌────────────────────────────────────────┐
-│ RED ALERT DISAPPEARS ✓                 │
-│ "Sign" button appears                  │
-│ All data shows correctly               │
-│ Network fee: 0.0079 USDC               │
-└────────┬───────────────────────────────┘
-         │
-         ↓ (User clicks "Sign")
-┌────────────────────────────────────────┐
-│ Transaction signed & sent              │
-│ Approval completes                     │
-└────────────────────────────────────────┘
-```
+**Timeline:**
+
+1. **T=0s**: Kullanıcı "Swap" tuşuna tıklar → MetaMask işlemi alır
+2. **T=0-1s**: MetaMask, RPC provider'ından fee hesaplamasını ister
+   - Gas tahmini yap
+   - Mevcut gas price'ı al
+   - Toplam fee'yi hesapla
+3. **T=1-2s**: Eğer RPC yavaşsa, MetaMask **KIRMIZI UYARI** gösterir
+   - "Network fee verification in progress" mesajı
+4. **T=5-10s**: RPC sonunda cevap veriyor ✓
+   - Gas estimate geldi
+   - Gas price geldi
+   - Fee hesaplandı
+5. **T=10s+**: **KIRMIZI UYARI KAYBOLUR** ✓
+   - "Sign" butonu görünür
+   - Tüm bilgiler doğru gösterilir
+   - Network fee: 0.0079 USDC
+6. **T=10s+**: Kullanıcı "Sign"e tıklar
+   - İşlem imzalanır ve gönderilir
+   - Onaylama tamamlanır ✓
 
 ---
 
