@@ -75,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                     <div className="flex items-center space-x-8">
                         <div className="flex items-center bg-arc-dark-700 px-3 py-2 rounded-lg">
                            <img 
-                               src="/assets/arclend.png" 
+                               src="/arclend.png" 
                                alt="ARCLend" 
                                className="h-8 w-auto"
                                style={{ objectFit: 'contain' }}
