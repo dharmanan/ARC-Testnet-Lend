@@ -631,10 +631,10 @@ When interacting with the protocol via MetaMask, users may see a **red alert war
 ### Problem Visualization
 
 **Before Fix (Red Alert)**
-![Red Alert](images/redalrt.png)
+![Red Alert](../images/redalrt.png)
 
 **After ~5-10 Seconds (Normal State)**
-![Fixed State](images/redalrtfix.png)
+![Fixed State](../images/redalrtfix.png)
 
 ### Root Cause
 - Arc Testnet RPC experiences occasional latency
