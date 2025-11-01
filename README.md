@@ -6,7 +6,7 @@ Complete DeFi ecosystem on Arc blockchain: lending pools, AMMs, and scheduled pa
 
 ## ⚠️ Testnet & MVP Notice
 
-**This is a testnet MVP (Minimum Viable Product) — not production-ready.**
+**This is a testnet MVP (Minimum Viable Product)  not production ready.**
 
 - 🧪 **Testnet Only**: Deployed on Arc Testnet only
 - 💰 **Test Funds Only**: Use testnet funds exclusively (no real assets)
@@ -20,8 +20,8 @@ Complete DeFi ecosystem on Arc blockchain: lending pools, AMMs, and scheduled pa
 ## Overview
 
 - **Lending Pool**: Collateralized borrowing with health factor management
-- **AMM Pairs**: Three constant-product pairs (ETH/WBTC, ETH/ARC, WBTC/ARC) with 0.3% fees
-- **Scheduled Payouts**: Time-locked fund releases
+- **AMM Pairs**: Three constant product pairs (ETH/WBTC, ETH/ARC, WBTC/ARC) with 0.3% fees
+- **Scheduled Payouts**: Time locked fund releases
 - **Frontend Demo**: React UI for protocol interaction
 - All contracts verified and audited on Arc Testnet
 
@@ -79,7 +79,7 @@ Private key: 0xcc1b30a6af68ea9a9917f1dd•••••••••••••�
 ```
 
 **⚠️ Important:**
-- Keep your private key **secure** — never share it or commit it to source control
+- Keep your private key **secure**  never share it or commit it to source control
 - Add the private key to `.env`:
 
 ```bash
@@ -179,9 +179,9 @@ Refer to [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for more development w
 
 ## Security
 
-- ⚠️ **Testnet only** — do not use with real funds or mainnet tokens
+- ⚠️ **Testnet only**  do not use with real funds or mainnet tokens
 - Use only testnet wallet (create new wallet for testing)
-- Never commit `.env` or private keys — use testnet secrets only
+- Never commit `.env` or private keys  use testnet secrets only
 - Reentrancy guards & access controls (OpenZeppelin)
 - See [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) for security details
 
