@@ -4,6 +4,7 @@ Complete DeFi ecosystem on Arc blockchain: lending pools, AMMs, and scheduled pa
 
 [![Tests](https://img.shields.io/badge/tests-20%2F20-green)](#) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
+
 ## Overview
 
 - **Lending Pool**: Collateralized borrowing with health factor management
@@ -11,6 +12,20 @@ Complete DeFi ecosystem on Arc blockchain: lending pools, AMMs, and scheduled pa
 - **Scheduled Payouts**: Time-locked fund releases
 - **Frontend Demo**: React UI for protocol interaction
 - All contracts verified and audited on Arc Testnet
+
+## Application Screenshots
+
+**Dashboard**
+
+![Dashboard](docs/images/dashboard.png)
+
+**Market**
+
+![Market](docs/images/market.png)
+
+**History (Transactions)**
+
+![History](docs/images/history.png)
 
 ## Quick Start
 
