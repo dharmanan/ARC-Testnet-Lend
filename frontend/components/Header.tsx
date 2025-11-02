@@ -75,8 +75,8 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                     <div className="flex items-center space-x-8">
                         <div className="flex items-center bg-arc-dark-700 px-3 py-2 rounded-lg">
                            <img 
-                               src="/arclend.png" 
-                               alt="ARCLend" 
+                               src="/arc.png" 
+                               alt="ARC" 
                                className="h-8 w-auto"
                                style={{ objectFit: 'contain' }}
                            />
@@ -86,6 +86,14 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                            <NavLink view="market">Market</NavLink>
                            <NavLink view="swap">Swap</NavLink>
                            <NavLink view="history">History</NavLink>
+                           <a
+                               href="https://arcbridge.vercel.app/"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               className="px-4 py-2 rounded-md text-sm font-medium text-arc-text-secondary hover:bg-arc-dark-800 hover:text-white transition-colors"
+                           >
+                               Bridge
+                           </a>
                         </nav>
                     </div>
                     <div className="hidden md:flex items-center justify-center flex-1">
@@ -133,6 +141,14 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                    <NavLink view="market">Market</NavLink>
                    <NavLink view="swap">Swap</NavLink>
                    <NavLink view="history">History</NavLink>
+                   <a
+                       href="https://arcbridge.vercel.app/"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       className="px-4 py-2 rounded-md text-sm font-medium text-arc-text-secondary hover:bg-arc-dark-800 hover:text-white transition-colors"
+                   >
+                       Bridge
+                   </a>
                 </nav>
             </div>
         </header>
