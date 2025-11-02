@@ -55,6 +55,16 @@ export const connectWallet = async (): Promise<string> => {
 
   provider = new ethers.BrowserProvider(window.ethereum);
   
+  // Check current network
+  const network = await provider.getNetwork();
+  const chainId = Number(network.chainId);
+  
+  // Arc Testnet chain ID: 5042002 (0x4cf1a2)
+  // Sepolia chain ID: 11155111 (0xaa36a7)
+  if (chainId !== 5042002) {
+    throw new Error('WRONG_NETWORK');
+  }
+  
   // Request accounts from MetaMask
   const accounts = await provider.send('eth_requestAccounts', []);
   

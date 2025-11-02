@@ -174,7 +174,12 @@ const App: React.FC = () => {
             }
         } catch (error) {
             console.error('Wallet connection failed:', error);
-            alert('Wallet connection failed: ' + (error as Error).message);
+            const errorMessage = (error as Error).message;
+            if (errorMessage === 'WRONG_NETWORK') {
+                alert('⚠️ Wrong Network Detected!\n\nThis app only works on Arc Testnet.\n\nPlease switch to Arc Testnet in MetaMask and try again.\n\nArc Testnet Chain ID: 5042002');
+            } else {
+                alert('Wallet connection failed: ' + errorMessage);
+            }
         } finally {
             setIsConnecting(false);
         }
