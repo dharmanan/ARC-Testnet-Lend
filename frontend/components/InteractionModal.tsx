@@ -153,6 +153,16 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
                          <div className="flex justify-between"><span>Borrow Balance</span> <span>{userBorrowBalance.toFixed(4)} {asset.symbol}</span></div>
                     </div>
                     
+                    {/* Network Fee Alert Banner */}
+                    <div className="bg-yellow-900/20 border border-yellow-600/30 rounded-lg p-3">
+                        <div className="flex items-start space-x-2">
+                            <span className="text-yellow-400 text-sm">⚠️</span>
+                            <div className="text-xs text-yellow-200">
+                                <span className="font-bold">Network Fee Alert:</span> MetaMask may show a red warning during transaction approval. This is normal - it means MetaMask is verifying the network fee. Wait 10-15 seconds and it will disappear automatically. Then click "Confirm" to complete your transaction.
+                            </div>
+                        </div>
+                    </div>
+                    
                     <button
                         type="submit"
                         disabled={isAmountInvalid || isLoading}
