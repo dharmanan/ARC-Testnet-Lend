@@ -429,6 +429,22 @@ const App: React.FC = () => {
                     </div>
                 )}
             </main>
+            
+            {/* Footer */}
+            <footer className="border-t border-arc-dark-700 mt-16">
+                <div className="container mx-auto px-4 py-8">
+                    <div className="text-center text-arc-text-secondary text-sm">
+                        <p className="mb-2">
+                            <strong>MVP Testnet Application</strong> - Educational v1 for <a href="https://docs.arc.network/arc/concepts/welcome-to-arc" target="_blank" rel="noopener noreferrer" className="text-arc-accent-primary hover:text-arc-accent-secondary underline">ARC Protocol</a>
+                        </p>
+                        <p className="text-xs opacity-75">
+                            This is a testnet demo application for learning and testing ARC Protocol features. 
+                            Not for production use. All transactions use test tokens with no real value.
+                        </p>
+                    </div>
+                </div>
+            </footer>
+            
             {modalState.isOpen && modalState.asset && modalState.type !== null && (
                 <InteractionModal 
                     isOpen={modalState.isOpen}

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArcIcon } from './icons';
+import { ArcIcon, TwitterIcon, GithubIcon } from './icons';
 
 interface HeaderProps {
     walletAddress: string | null;
@@ -112,6 +112,24 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                             className="border border-arc-accent-secondary text-arc-accent-secondary font-bold py-2 px-4 rounded-lg transition-colors hover:bg-arc-accent-secondary hover:text-white"
                         >
                             Faucet
+                        </a>
+                        <a
+                            href="https://x.com/KohenEric"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-arc-text-secondary hover:text-white transition-colors p-2 rounded-lg hover:bg-arc-dark-700"
+                            title="Follow on X (Twitter)"
+                        >
+                            <TwitterIcon />
+                        </a>
+                        <a
+                            href="https://github.com/dharmanan"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-arc-text-secondary hover:text-white transition-colors p-2 rounded-lg hover:bg-arc-dark-700"
+                            title="View on GitHub"
+                        >
+                            <GithubIcon />
                         </a>
                         {walletAddress ? (
                             <div className="flex items-center space-x-3">
