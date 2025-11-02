@@ -19,6 +19,8 @@ Complete DeFi ecosystem on Arc blockchain: lending pools, AMMs, and scheduled pa
 
 ## Overview
 
+Complete DeFi ecosystem on [Arc blockchain](https://docs.arc.network/arc/concepts/welcome-to-arc): lending pools, AMMs, and scheduled payouts. Built with Solidity + Foundry, React + Vite. **20/20 tests passing.**
+
 - **Lending Pool**: Collateralized borrowing with health factor management
 - **AMM Pairs**: Three constant product pairs (ETH/WBTC, ETH/ARC, WBTC/ARC) with 0.3% fees
 - **Scheduled Payouts**: Time locked fund releases
