@@ -17,10 +17,10 @@ export const CONTRACT_ADDRESSES: Record<string, string> = {
 
 // RPC URLs in priority order - system will try each one if previous fails
 export const RPC_URLS = [
-  'https://rpc.blockdaemon.testnet.arc.network',   // Primary - try blockdaemon first
-  'https://rpc.testnet.arc.network',               // Fallback - official Arc
+  'https://rpc.testnet.arc.network',               // Primary - official Arc
   'https://rpc.drpc.testnet.arc.network',          // Fallback 2
   'https://rpc.quicknode.testnet.arc.network',     // Fallback 3
+  'https://rpc.blockdaemon.testnet.arc.network',   // Fallback - Blockdaemon (eski veri döndürebiliyor)
 ];
 
 export const ARC_TESTNET_CHAIN = {

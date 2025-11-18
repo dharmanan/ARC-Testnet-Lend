@@ -21,11 +21,11 @@ const App: React.FC = () => {
 
     const [assets, setAssets] = useState<Asset[]>(ASSETS);
     const [userBalances, setUserBalances] = useState<UserBalance[]>([
-        { assetId: 'eth', amount: 10 },
-        { assetId: 'usdc', amount: 5000 },
-        { assetId: 'wbtc', amount: 0.5 },
-        { assetId: 'eurc', amount: 2000 },
-        { assetId: 'arc', amount: 1000 },
+        { assetId: 'eth', amount: 0 },
+        { assetId: 'usdc', amount: 0 },
+        { assetId: 'wbtc', amount: 0 },
+        { assetId: 'eurc', amount: 0 },
+        { assetId: 'arc', amount: 0 },
     ]);
     const [userSupplies, setUserSupplies] = useState<UserBalance[]>([
         { assetId: 'usdc', amount: 0.2 },
@@ -144,6 +144,7 @@ const App: React.FC = () => {
                     b.assetId === 'wbtc' ? { ...b, amount: parseFloat(wbtcBal) } :
                     b.assetId === 'arc' ? { ...b, amount: parseFloat(arcBal) } : b
                 ));
+                console.log('✅ User balances updated:', { usdc: usdcBal, eurc: eurcBal, eth: ethBal, wbtc: wbtcBal, arc: arcBal });
                 setUserSupplies([
                     { assetId: 'usdc', amount: parseFloat(usdcPoolBal) },
                     { assetId: 'eurc', amount: parseFloat(eurcPoolBal) },

@@ -202,6 +202,18 @@ Refer to [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for more development w
 - Reentrancy guards & access controls (OpenZeppelin)
 - See [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) for security details
 
+## Recent Updates
+
+### Fixed Issues ✅
+- **RPC Provider Caching** - Wallet balances now display accurate values from blockchain
+  - Arc official RPC (`https://rpc.testnet.arc.network`) is now primary provider
+  - Blockdaemon moved to fallback due to state sync lag
+  - Impact: Wallet balance displays correct values in real-time
+
+- **Mock Data Reset** - Initial wallet balance state no longer masks blockchain data
+  - User balances now load correctly from blockchain
+  - See [CHANGELOG.md](CHANGELOG.md) for details
+
 ## Troubleshooting & Known Issues
 
 - **MetaMask Red Alert**: RPC latency warning (not a security issue). See [METAMASK_RED_ALERT_RPC_DELAY.md](docs/METAMASK_RED_ALERT_RPC_DELAY.md)
