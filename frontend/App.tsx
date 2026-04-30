@@ -109,7 +109,6 @@ const App: React.FC = () => {
 
     const loadTotalSupplies = async () => {
         try {
-            console.log('Loading total supplies...');
             const [
                 usdcPoolTotalSupplied,
                 eurcPoolTotalSupplied,
@@ -153,19 +152,6 @@ const App: React.FC = () => {
                 getBorrowAPR(CONTRACT_ADDRESSES.wbtc),
                 getBorrowAPR(CONTRACT_ADDRESSES.arc),
             ]);
-
-            console.log('Total supplies loaded:', {
-                usdcPoolTotalSupplied,
-                eurcPoolTotalSupplied,
-                ethPoolTotalSupplied,
-                wbtcPoolTotalSupplied,
-                arcPoolTotalSupplied,
-                usdcPoolTotalBorrowed,
-                eurcPoolTotalBorrowed,
-                ethPoolTotalBorrowed,
-                wbtcPoolTotalBorrowed,
-                arcPoolTotalBorrowed
-            });
 
             setAssets(prevAssets => prevAssets.map(asset => {
                 if (asset.id === 'usdc') {
@@ -598,88 +584,5 @@ const App: React.FC = () => {
         </div>
     );
 };
-
-// Add global test functions for console debugging
-declare global {
-    interface Window {
-        testContracts?: any;
-    }
-}
-
-if (typeof window !== 'undefined') {
-    window.testContracts = {
-        contracts: {
-            usdc: CONTRACT_ADDRESSES.usdc,
-            eurc: CONTRACT_ADDRESSES.eurc,
-            eth: CONTRACT_ADDRESSES.eth,
-            wbtc: CONTRACT_ADDRESSES.wbtc,
-            arc: CONTRACT_ADDRESSES.arc,
-            lendingPool: CONTRACT_ADDRESSES.lendingPool,
-            scheduledPayoutManager: CONTRACT_ADDRESSES.scheduledPayoutManager,
-            ammPairETHWBTC: CONTRACT_ADDRESSES.ammPairETHWBTC,
-            ammPairETHARC: CONTRACT_ADDRESSES.ammPairETHARC,
-            ammPairWBTCARC: CONTRACT_ADDRESSES.ammPairWBTCARC,
-        },
-        functions: {
-            // Helper to check if wallet is connected
-            isWalletConnected: () => {
-                if (!window.ethereum || !window.ethereum.selectedAddress) {
-                    console.error('❌ Wallet not connected! Please connect MetaMask first.');
-                    return false;
-                }
-                console.log('✅ Wallet connected:', window.ethereum.selectedAddress);
-                return true;
-            },
-            
-            // Test token balances
-            testBalances: async () => {
-                if (!window.testContracts.functions.isWalletConnected()) return;
-                const addr = window.ethereum.selectedAddress;
-                console.log('\n📊 Testing Token Balances...\n');
-                
-                const tests = [
-                    { name: 'USDC', addr: CONTRACT_ADDRESSES.usdc },
-                    { name: 'EURC', addr: CONTRACT_ADDRESSES.eurc },
-                    { name: 'ETH', addr: CONTRACT_ADDRESSES.eth },
-                    { name: 'WBTC', addr: CONTRACT_ADDRESSES.wbtc },
-                    { name: 'ARC', addr: CONTRACT_ADDRESSES.arc },
-                ];
-                
-                for (const test of tests) {
-                    try {
-                        const balance = await getTokenBalance(test.addr, addr);
-                        console.log(`✅ ${test.name}: ${balance}`);
-                    } catch (e) {
-                        console.error(`❌ ${test.name}: ${e}`);
-                    }
-                }
-            },
-            
-            // Test lending pool operations
-            testLendingPool: async () => {
-                if (!window.testContracts.functions.isWalletConnected()) return;
-                console.log('\n🏦 Testing Lending Pool...\n');
-                
-                const tests = [
-                    { name: 'USDC totalSupplied', addr: CONTRACT_ADDRESSES.usdc },
-                    { name: 'EURC totalSupplied', addr: CONTRACT_ADDRESSES.eurc },
-                    { name: 'ETH totalSupplied', addr: CONTRACT_ADDRESSES.eth },
-                    { name: 'WBTC totalSupplied', addr: CONTRACT_ADDRESSES.wbtc },
-                    { name: 'ARC totalSupplied', addr: CONTRACT_ADDRESSES.arc },
-                ];
-                
-                for (const test of tests) {
-                    try {
-                        const total = await getPoolTotalSupplied(test.addr);
-                        console.log(`✅ ${test.name}: ${total}`);
-                    } catch (e) {
-                        console.error(`❌ ${test.name}: ${e}`);
-                    }
-                }
-            },
-        },
-    };
-    console.log('🧪 Test utilities ready! Type: testContracts.functions.testBalances() or testContracts.functions.testLendingPool()');
-}
 
 export default App;

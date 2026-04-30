@@ -30,11 +30,12 @@ const getAssetDecimals = (asset?: Asset) => {
 };
 
 const Swap: React.FC<SwapProps> = ({ assets, userBalances, onSwap, isLoading = false }) => {
-    const swappableAssets = assets.filter(asset => asset.id === 'usdc' || asset.id === 'eurc');
+    // Only show assets that have configured AMM pairs in this deployment.
+    const swappableAssets = assets.filter(asset => asset.id === 'eth' || asset.id === 'wbtc' || asset.id === 'arc');
     const quoteRequestIdRef = useRef(0);
     
-    const [fromAssetId, setFromAssetId] = useState<string>('usdc');
-    const [toAssetId, setToAssetId] = useState<string>('eurc');
+    const [fromAssetId, setFromAssetId] = useState<string>('eth');
+    const [toAssetId, setToAssetId] = useState<string>('wbtc');
     const [fromAmount, setFromAmount] = useState<string>('');
     const [toAmount, setToAmount] = useState<string>('');
     
@@ -72,7 +73,6 @@ const Swap: React.FC<SwapProps> = ({ assets, userBalances, onSwap, isLoading = f
                     return;
                 }
 
-                console.error('Error calculating swap amount:', error);
                 setToAmount('');
             });
     }, [fromAmount, fromAsset, toAsset]);

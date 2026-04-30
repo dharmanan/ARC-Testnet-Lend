@@ -169,9 +169,7 @@ export const getTokenBalance = async (tokenAddress: string, address: string): Pr
     // USDC and EURC are 6 decimals, WBTC is 8, others are 18
     const decimals = (tokenAddress === CONTRACT_ADDRESSES.usdc || tokenAddress === CONTRACT_ADDRESSES.eurc) ? 6 : 
                      (tokenAddress === CONTRACT_ADDRESSES.wbtc) ? 8 : 18;
-    const formatted = ethers.formatUnits(balance, decimals);
-    console.log(`Balance of ${tokenAddress.slice(0, 6)} for ${address.slice(0, 6)}: ${formatted}`);
-    return formatted;
+    return ethers.formatUnits(balance, decimals);
   } catch (error) {
     console.error('Error getting token balance:', error);
     throw error; // Re-throw to see the actual error
@@ -314,15 +312,11 @@ export const getTotalBorrowed = async (tokenAddress: string): Promise<string> =>
 export const getPoolTotalSupplied = async (tokenAddress: string): Promise<string> => {
   try {
     const lendingPool = getReadLendingPoolContract();
-    console.log('Calling totalSupplied for', tokenAddress);
     const totalSupplied = await lendingPool.totalSupplied(tokenAddress);
-    console.log('Raw totalSupplied:', totalSupplied.toString());
     // USDC and EURC are 6 decimals, WBTC is 8, others are 18
     const decimals = (tokenAddress === CONTRACT_ADDRESSES.usdc || tokenAddress === CONTRACT_ADDRESSES.eurc) ? 6 : 
                      (tokenAddress === CONTRACT_ADDRESSES.wbtc) ? 8 : 18;
-    const formatted = ethers.formatUnits(totalSupplied, decimals);
-    console.log('Formatted totalSupplied:', formatted);
-    return formatted;
+    return ethers.formatUnits(totalSupplied, decimals);
   } catch (error) {
     console.error('Error getting pool total supplied:', error);
     return '0';
@@ -348,8 +342,7 @@ export const getSupplyAPY = async (tokenAddress: string): Promise<number> => {
     const lendingPool = getReadLendingPoolContract();
     const apyBps = await lendingPool.getSupplyAPY(tokenAddress);
     return Number(apyBps) / 100;
-  } catch (error) {
-    console.error('Error getting supply APY:', error);
+  } catch {
     return 0;
   }
 };
@@ -359,8 +352,7 @@ export const getBorrowAPR = async (tokenAddress: string): Promise<number> => {
     const lendingPool = getReadLendingPoolContract();
     const aprBps = await lendingPool.getBorrowAPR(tokenAddress);
     return Number(aprBps) / 100;
-  } catch (error) {
-    console.error('Error getting borrow APR:', error);
+  } catch {
     return 0;
   }
 };
@@ -373,8 +365,7 @@ export const getAccountLiquidity = async (userAddress: string): Promise<{ collat
       collateralValue: Number(ethers.formatUnits(collateralValue, 18)),
       borrowValue: Number(ethers.formatUnits(borrowValue, 18)),
     };
-  } catch (error) {
-    console.error('Error getting account liquidity:', error);
+  } catch {
     // Price-based liquidity may be unavailable on older deployments. Do not break portfolio loading.
     return { collateralValue: 0, borrowValue: 0 };
   }
@@ -385,8 +376,7 @@ export const getMaxBorrowable = async (userAddress: string): Promise<number> => 
     const lendingPool = getReadLendingPoolContract();
     const maxBorrowable = await lendingPool.getMaxBorrowable(userAddress);
     return Number(ethers.formatUnits(maxBorrowable, 18));
-  } catch (error) {
-    console.error('Error getting max borrowable:', error);
+  } catch {
     return 0;
   }
 };
