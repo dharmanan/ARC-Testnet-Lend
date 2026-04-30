@@ -76,12 +76,16 @@ const LegacyClaims: React.FC<LegacyClaimsProps> = ({ assets, userBalances, userS
         <div className="bg-arc-dark-800 border border-arc-dark-700 rounded-xl overflow-hidden">
           <div className="p-6 border-b border-arc-dark-700">
             <h2 className="text-xl font-bold">Legacy Positions</h2>
+            <p className="mt-2 text-xs text-arc-text-secondary">
+              Pool Remaining = Total Supplied - Total Borrowed
+            </p>
           </div>
           <div className="divide-y divide-arc-dark-700">
             {legacyAssets.map(asset => {
               const walletBalance = userBalances.find(b => b.assetId === asset.id)?.amount || 0;
               const supplied = userSupplies.find(s => s.assetId === asset.id)?.amount || 0;
               const borrowed = userBorrows.find(b => b.assetId === asset.id)?.amount || 0;
+              const poolRemaining = Math.max(0, asset.totalSupplied - asset.totalBorrowed);
               const note = getLegacyNote(asset, supplied, borrowed);
 
               return (
@@ -92,7 +96,7 @@ const LegacyClaims: React.FC<LegacyClaimsProps> = ({ assets, userBalances, userS
                     <p className="text-sm text-arc-text-secondary">{asset.name}</p>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-8 text-right flex-1">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-right flex-1">
                     <div>
                       <p className="text-xs text-arc-text-secondary uppercase">Wallet</p>
                       <p className="font-mono">{formatAssetAmount(walletBalance, asset)}</p>
@@ -104,6 +108,10 @@ const LegacyClaims: React.FC<LegacyClaimsProps> = ({ assets, userBalances, userS
                     <div>
                       <p className="text-xs text-arc-text-secondary uppercase">Legacy Borrow</p>
                       <p className="font-mono text-red-400">{formatAssetAmount(borrowed, asset)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-arc-text-secondary uppercase">Pool Remaining</p>
+                      <p className="font-mono text-cyan-300">{formatAssetAmount(poolRemaining, asset)}</p>
                     </div>
                   </div>
 

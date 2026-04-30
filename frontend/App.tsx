@@ -80,8 +80,9 @@ const App: React.FC = () => {
 
     const [successModal, setSuccessModal] = useState<{
         isOpen: boolean;
+        title: string;
         message: string;
-    }>({ isOpen: false, message: '' });
+    }>({ isOpen: false, title: '', message: '' });
 
     const [isTransactionLoading, setIsTransactionLoading] = useState(false);
     const [accountLiquidity, setAccountLiquidity] = useState<{ collateralValue: number; borrowValue: number }>({ collateralValue: 0, borrowValue: 0 });
@@ -103,7 +104,7 @@ const App: React.FC = () => {
         setUserBorrows([]);
         setTransactions([]);
         setModalState({ isOpen: false, type: null, asset: null });
-        setSuccessModal({ isOpen: false, message: '' });
+        setSuccessModal({ isOpen: false, title: '', message: '' });
         setIsTransactionLoading(false);
         transactionInFlightRef.current = false;
         setAccountLiquidity({ collateralValue: 0, borrowValue: 0 });
@@ -321,6 +322,9 @@ const App: React.FC = () => {
         const amountNum = Number(amount);
         if (isNaN(amountNum) || amountNum <= 0) return;
 
+        let successTitle = '';
+        let successMessage = '';
+
         transactionInFlightRef.current = true;
         setIsTransactionLoading(true);
         try {
@@ -350,6 +354,8 @@ const App: React.FC = () => {
                 setUserSupplies(prev => prev.map(s => 
                     s.assetId === asset.id ? { ...s, amount: Math.max(0, s.amount - amountNum) } : s
                 ).filter(s => s.amount > 0.00001));
+                successTitle = 'Withdrawal Successful';
+                successMessage = `${formatAssetAmount(amountNum, asset)} ${asset.symbol} has been added to your wallet.`;
                 break;
             case ModalType.BORROW:
                 await borrowFromPool(asset.contractAddress!, amountNum.toString());
@@ -377,6 +383,8 @@ const App: React.FC = () => {
                 setUserBorrows(prev => prev.map(b => 
                     b.assetId === asset.id ? { ...b, amount: Math.max(0, b.amount - amountNum) } : b
                 ).filter(b => b.amount > 0.00001));
+                successTitle = 'Repayment Successful';
+                successMessage = `${formatAssetAmount(amountNum, asset)} ${asset.symbol} has been repaid successfully.`;
                 break;
             default:
                 alert("Feature not implemented yet");
@@ -403,6 +411,14 @@ const App: React.FC = () => {
         await loadTotalSupplies();
 
             closeModal();
+
+            if (successMessage) {
+                setSuccessModal({
+                    isOpen: true,
+                    title: successTitle,
+                    message: successMessage,
+                });
+            }
         } catch (error) {
             console.error('Transaction failed:', error);
             const message = (error as Error).message || '';
@@ -475,6 +491,7 @@ const App: React.FC = () => {
 
             setSuccessModal({
                 isOpen: true,
+                title: 'Swap Successful',
                 message: `Successfully swapped ${formatAssetAmount(fromAmount, fromAsset)} ${fromAsset.symbol} for ${formatAssetAmount(expectedOut, toAsset)} ${toAsset.symbol}`
             });
 
@@ -594,10 +611,10 @@ const App: React.FC = () => {
                     <div className="bg-arc-dark-800 p-6 rounded-xl border border-arc-dark-700 max-w-md w-full mx-4">
                         <div className="text-center">
                             <div className="text-green-400 text-4xl mb-4">✓</div>
-                            <h3 className="text-xl font-bold mb-2">Swap Successful</h3>
+                            <h3 className="text-xl font-bold mb-2">{successModal.title}</h3>
                             <p className="text-arc-text-secondary mb-4">{successModal.message}</p>
                             <button
-                                onClick={() => setSuccessModal({ isOpen: false, message: '' })}
+                                onClick={() => setSuccessModal({ isOpen: false, title: '', message: '' })}
                                 className="bg-arc-accent-primary hover:bg-opacity-80 text-white font-bold py-2 px-4 rounded-lg transition-colors"
                             >
                                 OK

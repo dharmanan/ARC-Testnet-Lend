@@ -83,7 +83,8 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
                 max = userWalletBalance;
                 break;
             case ModalType.WITHDRAW:
-                max = userSupplyBalance;
+                // Withdraw is limited by both user supply and current pool liquidity.
+                max = Math.min(userSupplyBalance, Math.max(0, asset.totalSupplied - asset.totalBorrowed));
                 break;
             case ModalType.BORROW:
                 if (asset.priceUSD <= 0) return 0;
@@ -151,7 +152,14 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 transition-opacity">
             <div className="bg-arc-dark-800 rounded-lg border border-arc-dark-700 w-full max-w-md m-4">
                 <div className="flex justify-between items-center p-6 border-b border-arc-dark-700">
-                    <h2 className="text-xl font-bold">{getTitle()}</h2>
+                    <div>
+                        <h2 className="text-xl font-bold">{getTitle()}</h2>
+                        {modalType === ModalType.WITHDRAW && (
+                            <p className="mt-1 text-xs text-arc-text-secondary">
+                                Pool Total: {formatAssetAmount(asset.totalSupplied, asset)} {asset.symbol}
+                            </p>
+                        )}
+                    </div>
                     <button onClick={onClose} disabled={isLoading || isSubmitting} className="text-arc-text-secondary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">&times;</button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
@@ -176,6 +184,9 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
                     <div className="text-sm space-y-2 text-arc-text-secondary">
                          <div className="flex justify-between"><span>Wallet Balance</span> <span>{formatAssetAmount(userWalletBalance, asset)} {asset.symbol}</span></div>
                          <div className="flex justify-between"><span>Supply Balance</span> <span>{formatAssetAmount(userSupplyBalance, asset)} {asset.symbol}</span></div>
+                        {modalType === ModalType.WITHDRAW && (
+                           <div className="flex justify-between"><span>Withdrawable Now</span> <span>{maxAmountDisplay} {asset.symbol}</span></div>
+                        )}
                          <div className="flex justify-between"><span>Borrow Balance</span> <span>{formatAssetAmount(userBorrowBalance, asset)} {asset.symbol}</span></div>
                     </div>
                     

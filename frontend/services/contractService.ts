@@ -207,8 +207,34 @@ export const withdrawFromPool = async (tokenAddress: string, amount: string): Pr
   const decimals = (tokenAddress === CONTRACT_ADDRESSES.usdc || tokenAddress === CONTRACT_ADDRESSES.eurc) ? 6 : 
                    (tokenAddress === CONTRACT_ADDRESSES.wbtc) ? 8 : 18;
   const amountWei = ethers.parseUnits(amount, decimals);
-  const tx = await lendingPool.withdraw(tokenAddress, amountWei);
-  await tx.wait();
+
+  const activeSigner = getRequiredSigner();
+  const userAddress = await activeSigner.getAddress();
+  const userSupplyWei: bigint = await lendingPool.balanceOf(tokenAddress, userAddress);
+
+  if (userSupplyWei < amountWei) {
+    throw new Error(`Insufficient supplied amount. Requested ${amount}, but on-chain supplied balance is ${ethers.formatUnits(userSupplyWei, decimals)}.`);
+  }
+
+  const token = getTokenContract(tokenAddress, true);
+  const poolTokenBalanceWei: bigint = await token.balanceOf(CONTRACT_ADDRESSES.lendingPool);
+
+  if (poolTokenBalanceWei < amountWei) {
+    throw new Error(
+      `Pool liquidity is currently insufficient for this withdrawal. Available: ${ethers.formatUnits(poolTokenBalanceWei, decimals)}, requested: ${amount}. Try a smaller amount or wait for more repayments.`
+    );
+  }
+
+  try {
+    const tx = await lendingPool.withdraw(tokenAddress, amountWei);
+    await tx.wait();
+  } catch (error) {
+    const errorMessage = (error as Error)?.message ?? '';
+    if (errorMessage.includes('0xe450d38c')) {
+      throw new Error('Withdraw failed: pool token balance is lower than requested amount (ERC20InsufficientBalance). Try a smaller withdrawal.');
+    }
+    throw error;
+  }
 };
 
 export const borrowFromPool = async (tokenAddress: string, amount: string): Promise<void> => {
