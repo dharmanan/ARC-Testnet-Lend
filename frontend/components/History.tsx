@@ -2,6 +2,7 @@
 import React from 'react';
 import { Transaction, TransactionType } from '../types';
 import { AssetIcon } from './AssetIcon';
+import { formatAssetAmount } from '../lib/formatters';
 
 interface HistoryProps {
     transactions: Transaction[];
@@ -45,7 +46,7 @@ const TransactionItem: React.FC<{ transaction: Transaction }> = ({ transaction }
     const { type, asset, amount, toAsset, toAmount, timestamp } = transaction;
 
     const renderTitle = () => {
-        const formattedAmount = amount.toLocaleString(undefined, { maximumFractionDigits: 4 });
+        const formattedAmount = formatAssetAmount(amount, asset);
         switch (type) {
             case TransactionType.SUPPLY:
                 return <p>Supplied {formattedAmount} <span className="font-bold">{asset.symbol}</span></p>;
@@ -57,7 +58,7 @@ const TransactionItem: React.FC<{ transaction: Transaction }> = ({ transaction }
                 return <p>Repaid {formattedAmount} <span className="font-bold">{asset.symbol}</span></p>;
             case TransactionType.SWAP:
                 if (toAsset && typeof toAmount !== 'undefined') {
-                    const formattedToAmount = toAmount.toLocaleString(undefined, { maximumFractionDigits: 4 });
+                    const formattedToAmount = formatAssetAmount(toAmount, toAsset);
                     return <p>Swapped {formattedAmount} <span className="font-bold">{asset.symbol}</span> for {formattedToAmount} <span className="font-bold">{toAsset.symbol}</span></p>;
                 }
                 return <p>Swap</p>;
@@ -81,8 +82,8 @@ const TransactionItem: React.FC<{ transaction: Transaction }> = ({ transaction }
                 </div>
             </div>
              <div className="text-right">
-                <p className="font-mono text-sm">{type === 'Swap' ? '-' : ''}{amount.toFixed(4)} {asset.symbol}</p>
-                 {toAsset && toAmount && <p className="font-mono text-sm text-green-400">+{toAmount.toFixed(4)} {toAsset.symbol}</p>}
+                <p className="font-mono text-sm">{type === 'Swap' ? '-' : ''}{formatAssetAmount(amount, asset)} {asset.symbol}</p>
+                 {toAsset && toAmount && <p className="font-mono text-sm text-green-400">+{formatAssetAmount(toAmount, toAsset)} {toAsset.symbol}</p>}
             </div>
         </div>
     );

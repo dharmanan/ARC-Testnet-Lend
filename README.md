@@ -1,240 +1,210 @@
-# ARC Testnet Lending Protocol 🏦
+# ARC Testnet Lending Protocol v2.2
 
-Complete DeFi ecosystem on Arc blockchain: lending pools, AMMs, and scheduled payouts. Built with Solidity + Foundry, React + Vite. **20/20 tests passing.**
+Arc Testnet Lending Protocol v2.2 is a testnet-only DeFi playground that combines collateralized lending, AMM swaps, and a scheduled payout manager on Arc Testnet. The current repo state includes dependency automation, a wagmi + viem wallet stack with RainbowKit popup flow, wallet-independent read paths, stricter app state handling, and a legacy-pool migration UI that prepares users for a replacement lending pool.
 
-[![Tests](https://img.shields.io/badge/tests-20%2F20-green)](#) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-20%2F20-green)](#validation-status) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-## ⚠️ Testnet & MVP Notice
+## Testnet Notice
 
-**This is a testnet MVP (Minimum Viable Product)  not production ready.**
+This repository is for Arc Testnet only.
 
-- 🧪 **Testnet Only**: Deployed on Arc Testnet only
-- 💰 **Test Funds Only**: Use testnet funds exclusively (no real assets)
-- 🚀 **MVP Status**: Core features complete but requires security audit before mainnet
-- 📋 **For Development & Testing**: Learning DeFi mechanics, protocol testing, and demos
+- Use test wallets and test funds only.
+- Do not connect a mainnet wallet with real assets.
+- The protocol is an MVP and is not ready for production use.
 
-**Do NOT use with mainnet tokens or real funds.**
+## Live App
 
----
+- Frontend: [https://arclending.vercel.app/](https://arclending.vercel.app/)
+- Bridge reference app: [https://arcbridge.vercel.app/](https://arcbridge.vercel.app/)
 
-## Overview
+## What's Included in v2.2
 
-Complete DeFi ecosystem on [Arc blockchain](https://docs.arc.network/arc/concepts/welcome-to-arc): lending pools, AMMs, and scheduled payouts. Built with Solidity + Foundry, React + Vite. **20/20 tests passing.**
+- Dependency automation: `.github/dependabot.yml` covers the root package, `frontend`, and GitHub Actions; `.github/workflows/dependency-review.yml` reviews dependency changes on pull requests.
+- Wallet and Web3 migration: the frontend now uses `wagmi` + `viem` with RainbowKit's wallet popup for injected, Coinbase, and optional WalletConnect flows.
+- Contract service split: write actions use a signer, while read-only queries use a deterministic read provider and no longer require an attached wallet.
+- App state hardening: wallet changes reset stale balances, borrows, supplies, history, and modal state before reloading fresh account data.
+- Functional fixes: swap quote race conditions, borrow max precision issues, and negative available-liquidity displays were cleaned up.
+- Shared formatting layer: asset display precision is centralized at USDC/EURC = 6, WBTC = 8, ETH/ARC = 6.
+- Legacy migration flow: the frontend now includes a migration countdown, legacy-only pool mode, and a dedicated legacy withdrawals/claims page for the old lending pool.
+- Active vs legacy pool preparation: the frontend address config now separates `legacy` and future `active` pool addresses so the replacement pool can be introduced without losing legacy access.
+- Tooling cleanup: Tailwind 4, Vite config updates, `dotenv` refresh, and Foundry library updates are in place.
+- Final cleanup status: the repository root `npm audit` is clean, the frontend `npm audit` is clean, and the frontend build still emits a Vite chunk-size warning for the wallet bundle.
 
-- **Lending Pool**: Collateralized borrowing with health factor management
-- **AMM Pairs**: Three constant product pairs (ETH/WBTC, ETH/ARC, WBTC/ARC) with 0.3% fees
-- **Scheduled Payouts**: Time locked fund releases
-- **Frontend Demo**: React UI for protocol interaction
-- All contracts verified and audited on Arc Testnet
+## Validation Status
 
-## 🚀 Live Demo
+Latest local validation for this repository:
 
-**Frontend Application**: [https://arclending.vercel.app/](https://arclending.vercel.app/)
+- `forge test --match-path test/Contracts.t.sol`: 20/20 passing
+- `npm --prefix frontend run build`: passing with a Vite chunk-size warning for the RainbowKit wallet bundle
+- `npm audit` in the repository root: 0 findings
+- `npm audit` in `frontend`: 0 findings
 
-Connect your Arc Testnet wallet and start interacting with the protocol!
+Current pinned library versions:
 
-## Application Screenshots
+- `forge-std`: `v1.16.0`
+- `openzeppelin-contracts`: `v5.6.1`
+- Root `dotenv`: `^17.4.2`
+- `@rainbow-me/rainbowkit`: `^2.2.10`
+- `wagmi`: `^2.19.5`
 
-**Dashboard**
+## Network Details
 
-![Dashboard](docs/images/dashboard.png)
+| Setting | Value |
+|---|---|
+| Chain Name | Arc Testnet |
+| Chain ID | `5042002` (`0x4cf1a2`) |
+| Gas Token | USDC |
+| Explorer | `https://testnet.arcscan.app` |
+| Primary RPC | `https://rpc.testnet.arc.network` |
+| Fallback RPC 1 | `https://rpc.drpc.testnet.arc.network` |
+| Fallback RPC 2 | `https://rpc.quicknode.testnet.arc.network` |
+| Fallback RPC 3 | `https://rpc.blockdaemon.testnet.arc.network` |
 
-**Market**
+Arc Testnet add/switch helpers are wired into the header, and the frontend can fall back to bundled RPC endpoints when a custom frontend RPC is not supplied.
 
-![Market](docs/images/market.png)
+## Contract Addresses
 
-**History (Transactions)**
+### Core Contracts
 
-![History](docs/images/history.png)
+| Contract | Address | Notes |
+|---|---|---|
+| LendingPool | `0x9dD7314B876fF9dFFB4F9aC4d4c8540156cf10b9` | Current legacy pool used during v2.2 migration window |
+| ScheduledPayoutManager | `0x2A094018d03E9F8f6321e55513aA0EaC89DFdEEf` | Deployed, not yet surfaced in the frontend |
+| AMM ETH/WBTC | `0xF4638B258905C6a2F7Aa71E05aAC887dB697c338` | Swap pair |
+| AMM ETH/ARC | `0x677df5298Fd0a80672b1E6B4a61BEB75534a83A1` | Swap pair |
+| AMM WBTC/ARC | `0x27e14cfEF1a029A32F574263dce67371bce32d24` | Swap pair |
 
-## Quick Links
+### Token Contracts
 
-- 🌐 **[Live Application](https://arclending.vercel.app/)** - Try the lending protocol now
-- 📖 **[Developer Docs](docs/)** - Smart contract details and architecture
-- 🔐 **[Security Audit](docs/dev-notes/SMART_CONTRACT_AUDIT.md)** - Contract security review
-- 🛣️ **[Roadmap](ROADMAP.md)** - Future features and phases
-- 🐛 **[Troubleshooting](docs/METAMASK_RED_ALERT_RPC_DELAY.md)** - Common issues and solutions
+| Token | Address | Decimals | Usage |
+|---|---|---:|---|
+| USDC | `0x3600000000000000000000000000000000000000` | 6 | Native Arc testnet stable asset |
+| EURC | `0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a` | 6 | Lending and collateral |
+| ETH | `0x6dC1d97820974558e1bD555C04a5A19608F9512d` | 18 | Project-deployed mock testnet ERC20 used for lending, collateral, and swaps |
+| WBTC | `0x27488Db1F8F9529B5820De984262179Ad913798E` | 8 | Project-deployed mock testnet ERC20 used for lending, collateral, and swaps |
+| ARC | `0x56EFFB3b22DBBE576E4327D196aa5ed51476924e` | 18 | Project-deployed mock testnet ERC20 used for lending, collateral, and swaps |
+| tUSD (legacy) | `0x78b8d44732a7e3601328B016d0bc0D30471685B7` | 18 | Legacy deployment, not part of the main frontend flow |
+
+### Token Reality Check
+
+- `src/MockETH.sol`, `src/MockWBTC.sol`, and `src/MockARC.sol` are mock ERC20 contracts included in this repository.
+- The configured frontend addresses for ETH, WBTC, and ARC point to deployed testnet mock tokens for this app, not canonical mainnet-style assets.
+- USDC is configured as Arc's native testnet stable asset, and EURC is configured as an Arc-side testnet token address for this deployment.
 
 ## Quick Start
 
-**Requirements**: Node.js 16+, Foundry, Git
+Requirements:
+
+- Node.js 18 or newer
+- npm
+- Git
+- Foundry
 
 ```bash
 git clone https://github.com/dharmanan/ARC-Testnet-Lend.git
 cd ARC-Testnet-Lend
 
-# Install frontend
-cd frontend && npm install && cd ..
+# Install root dependencies
+npm install
 
-# Create local .env file
+# Install frontend dependencies
+npm --prefix frontend install
+
+# Create local environment file
 cp .env.example .env
 
-# Run tests
-forge test -v
+# Run the repository test slice
+forge test --match-path test/Contracts.t.sol
 
-# Start frontend UI
-cd frontend && npm run dev
-# Open http://localhost:3000, connect MetaMask to Arc Testnet (Chain ID: 5042002)
+# Start the frontend
+npm --prefix frontend run dev
 ```
 
-⚠️ **Important**: Edit `.env` and add your `PRIVATE_KEY` and `ARC_TESTNET_RPC_URL`. **Never commit `.env` to git** it contains secrets.
+Open `http://localhost:3000` and connect a test wallet on Arc Testnet.
 
-## Setting Up a Testnet Wallet
+## Environment Variables
 
-Create a new testnet wallet using Foundry's `cast` command:
+Root `.env`:
 
-```bash
-cast wallet new
-```
+- `ARC_TESTNET_RPC_URL`: RPC endpoint for Foundry scripts and tests
+- `PRIVATE_KEY`: deployer or relayer key for testnet use only
+- `SCHEDULER_ADDRESS`: scheduled payout manager address when needed by scripts
 
-Output example:
-```
-Successfully created new keypair.
-Address:     0xB815A0c4bC23930119324d4359dB65e27A846A2d
-Private key: 0xcc1b30a6af68ea9a9917f1dd••••••••••••••••••••••••••••••••••••••97c5
-```
+Frontend `.env.local` or `.env`:
 
-**⚠️ Important:**
-- Keep your private key **secure**  never share it or commit it to source control
-- Add the private key to `.env`:
+- `VITE_ARC_RPC_URL`: optional frontend read RPC override
+- `VITE_WALLETCONNECT_PROJECT_ID`: optional WalletConnect project id
 
-```bash
-PRIVATE_KEY="0xcc1b30a6af68ea9a9917f1dd••••••••••••••••••••••••••••••••••••••97c5"
-```
+If `VITE_ARC_RPC_URL` is not set, the frontend falls back to the bundled Arc Testnet RPC list.
 
-Then reload your environment:
+Never commit `.env` files or private keys.
 
-```bash
-source .env
-```
+## Architecture Notes
 
-**Get testnet funds:**
-- Request faucet tokens from [Circle Faucet](https://faucet.circle.com/)
-- Use only testnet addresses and funds for testing
-- Use only testnet addresses and funds for testing
+- `frontend/lib/chains.ts` centralizes Arc Testnet chain metadata and wallet add/switch helpers.
+- `frontend/lib/wagmi.config.ts` configures injected, Coinbase, and optional WalletConnect connectors.
+- `frontend/lib/web3.tsx` provides the shared `WagmiProvider`, `QueryClientProvider`, and `RainbowKitProvider` tree.
+- `frontend/components/Header.tsx` renders RainbowKit's real `ConnectButton`, so wallet selection uses the original popup flow instead of an in-app dropdown.
+- `frontend/services/contractService.ts` keeps read paths and write paths separate, with `syncWalletClient(walletClient)` bridging wagmi into the `ethers` service layer.
+- `frontend/App.tsx` resets portfolio state on disconnect and account changes before loading fresh wallet-specific data.
+- `frontend/lib/formatters.ts` is the shared asset formatter used by swap, modal, history, and market rendering.
+- `frontend/components/LegacyClaims.tsx` provides the legacy migration surface for old-pool withdrawals and repayments.
+- `frontend/constants.ts` now separates `POOL_ADDRESSES.legacy` and `POOL_ADDRESSES.active` to support the v2.2 migration UI.
 
-## Smart Contracts
+## Legacy Pool Migration in v2.2
 
-| Contract | Address |
-|----------|---------|
-| LendingPool | `0x9dD7314B876fF9dFFB4F9aC4d4c8540156cf10b9` |
-| AMM (ETH/WBTC) | `0xF4638B258905C6a2F7Aa71E05aAC887dB697c338` |
-| AMM (ETH/ARC) | `0x677df5298Fd0a80672b1E6B4a61BEB75534a83A1` |
-| AMM (WBTC/ARC) | `0x27e14cfEF1a029A32F574263dce67371bce32d24` |
+The current lending pool remains accessible as a legacy pool while the app prepares for a replacement deployment.
 
-Token addresses: [CONTRACTS_REPORT.md](docs/dev-notes/CONTRACTS_REPORT.md)
+- A live countdown banner is shown in the app.
+- The sunset window is currently set to **15 days**.
+- The main market operates in a legacy wind-down mode.
+- New supply and new borrow actions are disabled in the legacy pool UI.
+- Withdraw and repay remain available.
+- A dedicated `Legacy` tab provides direct access to legacy balances and actions.
 
+Important migration notes:
 
+- Legacy balances remain user-controlled and are not swept by the owner.
+- The old deployed pool does not fully match the newer interest/oracle model.
+- Because of that deployment mismatch, legacy APY is intentionally limited or hidden where needed instead of showing possibly incorrect values.
+- When the replacement pool is deployed, the user interface will change again to separate the new active pool from the legacy withdrawal flow.
 
-## Project Structure
+See also: [`docs/LEGACY_POOL_MIGRATION_PLAN.md`](docs/LEGACY_POOL_MIGRATION_PLAN.md)
 
-```
+## Project Layout
+
+```text
 ARC-Testnet-Lend/
-├── src/                # Solidity contracts
-│   ├── LendingPool.sol
-│   ├── GenericAMMPair.sol
-│   ├── ScheduledPayoutManager.sol
-│   └── ...
-├── test/               # Foundry tests
-│   └── Contracts.t.sol
-├── script/             # Deployment & helper scripts
-│   ├── Deploy.s.sol
-│   ├── AddLiquidity.s.sol
-│   └── ...
-├── frontend/           # React + Vite frontend
-│   ├── App.tsx, index.tsx, ...
-│   ├── components/
-│   └── assets/
-├── docs/               # Guides, user & dev docs
-│   ├── LENDING_POOL_GUIDE.md
-│   ├── dev-notes/
-│   └── images/
-├── ROADMAP.md          # Project roadmap
-├── DEPLOYMENT_VERIFICATION.md
-├── DOCUMENTATION_INDEX.md
-├── LICENSE             # MIT License
-├── README.md           # This file
-└── ...
+├── src/                    Solidity contracts
+├── test/                   Foundry test suite
+├── script/                 Deployment and liquidity scripts
+├── frontend/               React, Vite, wagmi + RainbowKit frontend
+├── relayer/                Scheduled payout relayer
+├── docs/                   Kept reference docs and screenshots
+├── foundry.lock            Pinned Foundry library versions
+├── package.json            Root relayer package
+├── ROADMAP.md              Public roadmap
+└── README.md               Canonical repository README
 ```
 
-## Roadmap
+## Supporting Docs
 
-See [ROADMAP.md](ROADMAP.md) for planned features, phases, and known limitations.
-
-## Documentation
-
-- [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) — quick links & overview
-- [LENDING_POOL_GUIDE.md](docs/LENDING_POOL_GUIDE.md) — user guide with UI walkthrough
-- [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) — security details
-- [DEPLOYMENT_VERIFICATION.md](DEPLOYMENT_VERIFICATION.md) — deployment & verification
-
-## Development
-
-Build and test the protocol locally:
-
-```bash
-# Build contracts
-forge build
-
-# Run all tests (20 tests)
-forge test -v
-
-# Run specific test file
-forge test --match-path test/Contracts.t.sol -v
-```
-
-Refer to [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for more development workflows and debugging steps.
-
-## Tech Stack
-
-- **Smart Contracts**: Solidity 0.8.20 + OpenZeppelin Contracts
-- **Testing**: Foundry + Solc 0.8.20
-- **Frontend**: React + TypeScript + Vite
-- **Styling**: Tailwind CSS
-- **Blockchain**: Arc Testnet
-- **RPC Integration**: ethers.js
-
-## Security
-
-- ⚠️ **Testnet only**  do not use with real funds or mainnet tokens
-- Use only testnet wallet (create new wallet for testing)
-- Never commit `.env` or private keys  use testnet secrets only
-- Reentrancy guards & access controls (OpenZeppelin)
-- See [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) for security details
-
-## Recent Updates
-
-### Fixed Issues ✅
-- **RPC Provider Caching** - Wallet balances now display accurate values from blockchain
-  - Arc official RPC (`https://rpc.testnet.arc.network`) is now primary provider
-  - Blockdaemon moved to fallback due to state sync lag
-  - Impact: Wallet balance displays correct values in real-time
-
-- **Mock Data Reset** - Initial wallet balance state no longer masks blockchain data
-  - User balances now load correctly from blockchain
-  - See [CHANGELOG.md](CHANGELOG.md) for details
-
-## Troubleshooting & Known Issues
-
-- **MetaMask Red Alert**: RPC latency warning (not a security issue). See [METAMASK_RED_ALERT_RPC_DELAY.md](docs/METAMASK_RED_ALERT_RPC_DELAY.md)
-- **Transaction Delays**: Arc Testnet RPC may be slow. Wait 5-10 seconds and refresh.
-- **Contract Issues**: Check [SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md) for known limitations
+- [ROADMAP.md](ROADMAP.md)
+- [docs/LEGACY_POOL_MIGRATION_PLAN.md](docs/LEGACY_POOL_MIGRATION_PLAN.md)
+- [docs/LENDING_POOL_GUIDE.md](docs/LENDING_POOL_GUIDE.md)
+- [docs/METAMASK_RED_ALERT_RPC_DELAY.md](docs/METAMASK_RED_ALERT_RPC_DELAY.md)
+- [docs/WBTC_ARC_APPROVAL_EXPLAINED.md](docs/WBTC_ARC_APPROVAL_EXPLAINED.md)
+- [docs/dev-notes/SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md)
 
 ## Contributing
 
-Open issues or PRs. For protocol changes, discuss in an issue first.
+Before opening a pull request for contract or frontend changes, run:
 
 ```bash
-git checkout -b feature/my-change
-forge test
-git push origin feature/my-change
+forge test --match-path test/Contracts.t.sol
+npm --prefix frontend run build
 ```
 
 ## License
 
-MIT — [LICENSE](LICENSE)
-
----
-
-For detailed guides, UI screenshots, and implementation details, see [`docs/`](docs/).
-````
+MIT - [LICENSE](LICENSE)

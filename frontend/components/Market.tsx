@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Asset, UserBalance } from '../types';
 import AssetRow from './AssetRow';
@@ -9,11 +8,19 @@ interface MarketProps {
     userSupplies: UserBalance[];
     userBorrows: UserBalance[];
     openModal: Function;
+    legacyMode?: boolean;
 }
 
-const Market: React.FC<MarketProps> = ({ assets, userBalances, userSupplies, userBorrows, openModal }) => {
+const Market: React.FC<MarketProps> = ({ assets, userBalances, userSupplies, userBorrows, openModal, legacyMode = false }) => {
     return (
         <div className="space-y-12">
+            {legacyMode && (
+                <div className="bg-yellow-900/20 border border-yellow-600/40 rounded-xl p-5">
+                    <p className="text-sm text-yellow-100">
+                        Legacy sunset mode is active. New supply and borrow actions are disabled here. Use this period to withdraw supplied funds and repay open borrows before migration.
+                    </p>
+                </div>
+            )}
             <MarketTable 
                 title="Assets to Supply" 
                 assets={assets}
@@ -22,6 +29,7 @@ const Market: React.FC<MarketProps> = ({ assets, userBalances, userSupplies, use
                 userBorrows={userBorrows}
                 openModal={openModal}
                 type="supply"
+                legacyMode={legacyMode}
             />
             <MarketTable 
                 title="Assets to Borrow" 
@@ -31,6 +39,7 @@ const Market: React.FC<MarketProps> = ({ assets, userBalances, userSupplies, use
                 userBorrows={userBorrows}
                 openModal={openModal}
                 type="borrow"
+                legacyMode={legacyMode}
             />
         </div>
     );
@@ -44,9 +53,17 @@ interface MarketTableProps {
     userBorrows: UserBalance[];
     openModal: Function;
     type: 'supply' | 'borrow';
+    legacyMode?: boolean;
 }
 
-const MarketTable: React.FC<MarketTableProps> = ({ title, assets, userBalances, userSupplies, userBorrows, openModal, type }) => {
+const MarketTable: React.FC<MarketTableProps> = ({ title, assets, userBalances, userSupplies, userBorrows, openModal, type, legacyMode = false }) => {
+    // Filter assets based on type and enabled flags
+    const filteredAssets = assets.filter(asset => {
+        if (type === 'supply') return asset.lendingEnabled;
+        if (type === 'borrow') return asset.borrowEnabled;
+        return true;
+    });
+
     return (
         <div className="bg-arc-dark-800 rounded-lg border border-arc-dark-700 overflow-hidden">
             <h2 className="text-xl font-bold p-6">{title}</h2>
@@ -64,7 +81,7 @@ const MarketTable: React.FC<MarketTableProps> = ({ title, assets, userBalances, 
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-arc-dark-700">
-                        {assets.map(asset => (
+                        {filteredAssets.map(asset => (
                             <AssetRow
                                 key={asset.id}
                                 asset={asset}
@@ -74,6 +91,7 @@ const MarketTable: React.FC<MarketTableProps> = ({ title, assets, userBalances, 
                                 openModal={openModal}
                                 isPosition={false}
                                 type={type}
+                                legacyMode={legacyMode}
                             />
                         ))}
                     </tbody>

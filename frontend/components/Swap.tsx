@@ -1,8 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Asset, UserBalance } from '../types';
 import { getSwapAmountOut } from '../services/contractService';
 import { ethers } from 'ethers';
+
+import { formatAssetAmount } from '../lib/formatters';
 
 interface SwapProps {
     assets: Asset[];
@@ -11,18 +13,28 @@ interface SwapProps {
     isLoading?: boolean;
 }
 
-interface PairConfig {
-    id: string;
-    name: string;
-    token0: string;
-    token1: string;
-}
+const getAssetDecimals = (asset?: Asset) => {
+    if (!asset?.contractAddress) {
+        return 18;
+    }
+
+    if (asset.contractAddress === '0x27488Db1F8F9529B5820De984262179Ad913798E') {
+        return 8;
+    }
+
+    if (asset.contractAddress === '0x3600000000000000000000000000000000000000' || asset.contractAddress === '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a') {
+        return 6;
+    }
+
+    return 18;
+};
 
 const Swap: React.FC<SwapProps> = ({ assets, userBalances, onSwap, isLoading = false }) => {
-    const swappableAssets = assets.filter(asset => asset.id === 'eth' || asset.id === 'wbtc' || asset.id === 'arc');
+    const swappableAssets = assets.filter(asset => asset.id === 'usdc' || asset.id === 'eurc');
+    const quoteRequestIdRef = useRef(0);
     
-    const [fromAssetId, setFromAssetId] = useState<string>('eth');
-    const [toAssetId, setToAssetId] = useState<string>('wbtc');
+    const [fromAssetId, setFromAssetId] = useState<string>('usdc');
+    const [toAssetId, setToAssetId] = useState<string>('eurc');
     const [fromAmount, setFromAmount] = useState<string>('');
     const [toAmount, setToAmount] = useState<string>('');
     
@@ -32,31 +44,42 @@ const Swap: React.FC<SwapProps> = ({ assets, userBalances, onSwap, isLoading = f
     const toBalance = userBalances.find(b => b.assetId === toAssetId)?.amount || 0;
 
     useEffect(() => {
-        if (fromAsset && toAsset && fromAmount) {
-            const amount = parseFloat(fromAmount);
-            if (!isNaN(amount) && amount > 0) {
-                // Get actual swap amount from on-chain contract
-                getSwapAmountOut(fromAsset.contractAddress!, toAsset.contractAddress!, fromAmount)
-                    .then(amountOutWei => {
-                        // Determine decimals for output token
-                        const outDecimals = toAsset.contractAddress === '0x27488Db1F8F9529B5820De984262179Ad913798E' ? 8 : 
-                                          (toAsset.contractAddress === '0x3600000000000000000000000000000000000000' || toAsset.contractAddress === '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a') ? 6 : 18;
-                        const formatted = parseFloat(ethers.formatUnits(amountOutWei, outDecimals));
-                        setToAmount(formatted.toFixed(6));
-                    })
-                    .catch(error => {
-                        console.error('Error calculating swap amount:', error);
-                        setToAmount('');
-                    });
-            } else {
-                setToAmount('');
-            }
-        } else {
+        const requestId = ++quoteRequestIdRef.current;
+
+        if (!fromAsset || !toAsset || !fromAmount) {
             setToAmount('');
+            return;
         }
+
+        const amount = parseFloat(fromAmount);
+        if (isNaN(amount) || amount <= 0) {
+            setToAmount('');
+            return;
+        }
+
+        getSwapAmountOut(fromAsset.contractAddress!, toAsset.contractAddress!, fromAmount)
+            .then(amountOutWei => {
+                if (quoteRequestIdRef.current !== requestId) {
+                    return;
+                }
+
+                const outDecimals = getAssetDecimals(toAsset);
+                const formatted = parseFloat(ethers.formatUnits(amountOutWei, outDecimals));
+                setToAmount(formatAssetAmount(formatted, toAsset));
+            })
+            .catch(error => {
+                if (quoteRequestIdRef.current !== requestId) {
+                    return;
+                }
+
+                console.error('Error calculating swap amount:', error);
+                setToAmount('');
+            });
     }, [fromAmount, fromAsset, toAsset]);
     
     const handleSwapAssets = () => {
+        setFromAmount('');
+        setToAmount('');
         setFromAssetId(toAssetId);
         setToAssetId(fromAssetId);
     };
@@ -69,44 +92,19 @@ const Swap: React.FC<SwapProps> = ({ assets, userBalances, onSwap, isLoading = f
     }
     
     const handleMax = () => {
-        setFromAmount(fromBalance.toString());
+        setFromAmount(formatAssetAmount(fromBalance, fromAsset));
     }
     
     const handleSubmit = () => {
         if(fromAsset && toAsset && fromAmount) {
             onSwap(fromAsset, toAsset, parseFloat(fromAmount));
-            setFromAmount('');
         }
     }
 
     return (
         <div className="max-w-md mx-auto bg-arc-dark-800 p-6 rounded-xl border border-arc-dark-700 space-y-4">
             <h2 className="text-xl font-bold text-center">Swap</h2>
-            
-            {/* Approval Warning - Comprehensive Info */}
-            <div className="space-y-3">
-                <div className="bg-blue-900/20 border border-blue-600/50 p-3 rounded-lg">
-                    <p className="text-sm text-blue-400 leading-relaxed">
-                        <span className="font-bold">ℹ️ Token Approval Required:</span> MetaMask will ask permission to use your tokens. This is normal and safe.
-                    </p>
-                </div>
-                
-                <div className="bg-yellow-900/20 border border-yellow-600/50 p-3 rounded-lg">
-                    <p className="text-xs text-yellow-300 leading-relaxed">
-                        <span className="font-bold">⚠️ Network Fee Alert:</span> MetaMask may show a red warning during approval. This is normal - it means MetaMask is verifying the network fee. Wait 5-10 seconds and it will disappear automatically. Then click "Sign" to complete your swap.
-                    </p>
-                </div>
-                
-                <div className="bg-green-900/20 border border-green-600/50 p-3 rounded-lg">
-                    <p className="text-xs text-green-300 leading-relaxed">
-                        <span className="font-bold">✓ Safe & Normal:</span> The "Withdrawal request" message is MetaMask's generic template. It's completely safe. Just confirm to complete your swap.
-                    </p>
-                    <p className="text-xs text-green-300 leading-relaxed mt-2">
-                        <span className="font-bold">🧪 Testnet Protection:</span> This is a testnet - no real assets are at risk. However, <span className="font-bold text-green-200">ALWAYS use a testnet wallet</span>. Never use your mainnet wallet address here.
-                    </p>
-                </div>
-            </div>
-            
+
             <SwapInput
                 label="From"
                 assetId={fromAssetId}
@@ -137,7 +135,7 @@ const Swap: React.FC<SwapProps> = ({ assets, userBalances, onSwap, isLoading = f
                 isReadOnly={true}
             />
             
-            {fromAsset && toAsset && toAmount && <p className="text-sm text-center text-arc-text-secondary">1 {fromAsset.symbol} ≈ {(parseFloat(toAmount) / parseFloat(fromAmount || '1')).toFixed(4)} {toAsset.symbol}</p>}
+            {fromAsset && toAsset && toAmount && <p className="text-sm text-center text-arc-text-secondary">1 {fromAsset.symbol} ≈ {formatAssetAmount(parseFloat(toAmount) / parseFloat(fromAmount || '1'), toAsset)} {toAsset.symbol}</p>}
 
             <button
                 onClick={handleSubmit}
@@ -170,7 +168,7 @@ const SwapInput: React.FC<SwapInputProps> = ({ label, assetId, setAssetId, amoun
         <div className="bg-arc-dark-900 p-4 rounded-lg">
             <div className="flex justify-between items-center mb-1">
                 <span className="text-xs text-arc-text-secondary">{label}</span>
-                {balance !== undefined && <span className="text-xs text-arc-text-secondary">Balance: {balance.toFixed(4)}</span>}
+                {balance !== undefined && <span className="text-xs text-arc-text-secondary">Balance: {formatAssetAmount(balance, selectedAsset)}</span>}
             </div>
             <div className="flex justify-between items-center">
                 <input 

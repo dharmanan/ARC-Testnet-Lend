@@ -81,10 +81,19 @@ const Dashboard: React.FC<DashboardProps> = ({ assets, userSupplies, userBorrows
     return (
         <div className="space-y-8">
             {/* Info Banner */}
-            <div className="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border border-yellow-600/50 p-4 rounded-lg">
-                <p className="text-sm text-yellow-400">
-                    <span className="font-bold">ℹ️ Note:</span> Daily Earnings shown are estimated based on current APY rates. 
-                    Actual interest claim functionality is coming in the next contract upgrade.
+            <div className="bg-yellow-900/20 border border-yellow-600/40 p-4 rounded-lg">
+                <p className="text-sm text-yellow-100">
+                    <span className="font-bold">Legacy Pool Notice:</span> Current balances shown here are from the legacy pool. Use the <span className="font-semibold">Legacy</span> tab to withdraw supplied funds or repay borrows during the migration window.
+                </p>
+            </div>
+            <div className="bg-arc-dark-800 border border-arc-dark-700 p-4 rounded-lg">
+                <p className="text-sm text-arc-text-secondary">
+                    Legacy yield display is limited. Existing supply and borrow balances remain readable, but APY on this deployment may not reflect the intended newer interest model. Use the legacy flow primarily for withdrawals and repayments.
+                </p>
+            </div>
+            <div className="bg-linear-to-r from-blue-900/20 to-purple-900/20 border border-blue-600/50 p-4 rounded-lg">
+                <p className="text-sm text-blue-300">
+                    <span className="font-bold">Real Lending:</span> USDC and EURC supplier balances accrue automatically and are realized on withdrawal. ETH, WBTC, and ARC remain collateral-only.
                 </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
@@ -95,7 +104,7 @@ const Dashboard: React.FC<DashboardProps> = ({ assets, userSupplies, userBorrows
                 <div className="bg-arc-dark-800 p-6 rounded-lg border border-arc-dark-700">
                     <h3 className="text-arc-text-secondary text-sm">Daily Earnings</h3>
                     <p className={`text-3xl font-bold ${netDailyEarnings >= 0 ? 'text-green-400' : 'text-red-400'}`}>{netDailyEarnings >= 0 ? '+' : ''}{formatCurrency(netDailyEarnings)}</p>
-                    <p className="text-xs text-yellow-400 mt-2">⚠️ Estimated - Claim feature coming soon</p>
+                    <p className="text-xs text-blue-300 mt-2">Interest is not claimed separately; it is included when you withdraw.</p>
                 </div>
                 <div className="bg-arc-dark-800 p-6 rounded-lg border border-arc-dark-700">
                     <h3 className="text-arc-text-secondary text-sm">Total Borrowed</h3>

@@ -1,6 +1,19 @@
 
 import React, { useState } from 'react';
 import { Asset, ModalType } from '../types';
+import { formatAssetAmount, getAssetDisplayDecimals } from '../lib/formatters';
+
+const getAssetDecimals = (asset: Asset) => {
+    if (asset.symbol === 'WBTC') {
+        return 8;
+    }
+
+    if (asset.symbol === 'USDC' || asset.symbol === 'EURC') {
+        return 6;
+    }
+
+    return 18;
+};
 
 interface InteractionModalProps {
     isOpen: boolean;
@@ -29,6 +42,28 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
 }) => {
     const [amount, setAmount] = useState('');
 
+    const getInputPrecision = () => getAssetDisplayDecimals(asset);
+
+    const clampAmount = (value: number) => {
+        if (!Number.isFinite(value) || value <= 0) {
+            return 0;
+        }
+
+        const factor = 10 ** getInputPrecision();
+        return Math.floor(value * factor) / factor;
+    };
+
+    const formatAmount = (value: number) => {
+        const clamped = clampAmount(value);
+        const precision = getInputPrecision();
+
+        if (clamped === 0) {
+            return '0';
+        }
+
+        return clamped.toFixed(precision).replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
+    };
+
     if (!isOpen) return null;
 
     const getTitle = () => {
@@ -51,38 +86,21 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
                 break;
             case ModalType.BORROW:
                 if (asset.priceUSD <= 0) return 0;
-                
-                // Debug logging
-                console.log('Borrow calculation for', asset.symbol);
-                console.log('availableBorrowUSD prop:', availableBorrowUSD);
-                console.log('asset.priceUSD:', asset.priceUSD);
-                console.log('asset.totalSupplied:', asset.totalSupplied);
-                console.log('asset.totalBorrowed:', asset.totalBorrowed);
-                
+
                 // Available borrow in USD, convert to asset amount
                 const availableBorrowInAsset = availableBorrowUSD / asset.priceUSD;
-                console.log('availableBorrowInAsset:', availableBorrowInAsset);
-                
+
                 // Pool liquidity limit: total supplied - total borrowed
-                const poolLiquidityLimit = asset.totalSupplied - asset.totalBorrowed;
-                console.log('poolLiquidityLimit:', poolLiquidityLimit);
-                
+                const poolLiquidityLimit = Math.max(0, asset.totalSupplied - asset.totalBorrowed);
+
                 // Take the minimum of both limits
-                const borrowLimit = Math.min(availableBorrowInAsset, poolLiquidityLimit);
-                console.log('borrowLimit before adjustment:', borrowLimit);
-                max = Math.max(0, borrowLimit);
-                
-                // USDC/EURC için 6 ondalık sınırı uygula ve epsilon çıkar
-                if (asset.symbol === 'USDC' || asset.symbol === 'EURC') {
-                    max = Math.floor(max * 1e6) / 1e6 - 0.000001;
-                }
-                console.log('final max:', max);
+                max = clampAmount(Math.min(Math.max(0, availableBorrowInAsset), poolLiquidityLimit));
                 break;
             case ModalType.REPAY:
                 max = Math.min(userWalletBalance, userBorrowBalance);
                 break;
         }
-        return max;
+        return clampAmount(max);
     };
 
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,13 +111,7 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
     };
     
     const handleSetMax = () => {
-        const max = getMaxAmount();
-        // USDC/EURC için 6 ondalık, diğerleri için 18 ondalık göster
-        if (asset.symbol === 'USDC' || asset.symbol === 'EURC') {
-            setAmount(max.toFixed(6));
-        } else {
-            setAmount(max.toFixed(18));
-        }
+        setAmount(formatAmount(getMaxAmount()));
     }
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -117,8 +129,7 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
     }
     
     const maxAmount = getMaxAmount();
-    // USDC/EURC için 6 ondalık göster
-    const maxAmountDisplay = (asset.symbol === 'USDC' || asset.symbol === 'EURC') ? maxAmount.toFixed(6) : maxAmount.toFixed(4);
+    const maxAmountDisplay = formatAmount(maxAmount);
     const amountNum = parseFloat(amount);
     const isAmountInvalid = isNaN(amountNum) || amountNum <= 0 || amountNum > maxAmount;
 
@@ -148,9 +159,9 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
                     </div>
 
                     <div className="text-sm space-y-2 text-arc-text-secondary">
-                         <div className="flex justify-between"><span>Wallet Balance</span> <span>{userWalletBalance.toFixed(4)} {asset.symbol}</span></div>
-                         <div className="flex justify-between"><span>Supply Balance</span> <span>{userSupplyBalance.toFixed(4)} {asset.symbol}</span></div>
-                         <div className="flex justify-between"><span>Borrow Balance</span> <span>{userBorrowBalance.toFixed(4)} {asset.symbol}</span></div>
+                         <div className="flex justify-between"><span>Wallet Balance</span> <span>{formatAssetAmount(userWalletBalance, asset)} {asset.symbol}</span></div>
+                         <div className="flex justify-between"><span>Supply Balance</span> <span>{formatAssetAmount(userSupplyBalance, asset)} {asset.symbol}</span></div>
+                         <div className="flex justify-between"><span>Borrow Balance</span> <span>{formatAssetAmount(userBorrowBalance, asset)} {asset.symbol}</span></div>
                     </div>
                     
                     {/* Network Fee Alert Banner */}

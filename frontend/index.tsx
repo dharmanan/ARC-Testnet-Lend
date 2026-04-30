@@ -1,8 +1,20 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Buffer } from 'buffer';
+import '@rainbow-me/rainbowkit/styles.css';
+
 import './index.css';
 import App from './App';
+import { Web3Providers } from './lib/web3';
+
+const globalScope = globalThis as typeof globalThis & {
+  Buffer?: typeof Buffer;
+  global?: typeof globalThis;
+};
+
+globalScope.Buffer ??= Buffer;
+globalScope.global ??= globalThis;
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -12,6 +24,8 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <Web3Providers>
+      <App />
+    </Web3Providers>
   </React.StrictMode>
 );

@@ -1,61 +1,16 @@
 
 import React from 'react';
-import { ArcIcon, TwitterIcon, GithubIcon } from './icons';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+
+import { TwitterIcon, GithubIcon } from './icons';
 
 interface HeaderProps {
-    walletAddress: string | null;
-    onConnectWallet: () => void;
-    onDisconnectWallet?: () => void;
     activeView: string;
-    setActiveView: (view: 'dashboard' | 'market' | 'swap' | 'history') => void;
-    isConnecting: boolean;
+    setActiveView: (view: 'dashboard' | 'market' | 'swap' | 'history' | 'legacy') => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisconnectWallet, activeView, setActiveView, isConnecting }) => {
-    
-    const shortenAddress = (address: string) => {
-        return `${address.slice(0, 6)}...${address.slice(-4)}`;
-    };
-    
-    const addArcTestnet = async () => {
-        if (!window.ethereum) {
-            alert('MetaMask not installed!');
-            return;
-        }
-
-        try {
-            await window.ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [{
-                    chainId: '0x4cf1a2',
-                    chainName: 'Arc Testnet',
-                    nativeCurrency: {
-                        name: 'USDC',
-                        symbol: 'USDC',
-                        decimals: 6
-                    },
-                    rpcUrls: ['https://rpc.testnet.arc.network'],
-                    blockExplorerUrls: ['https://testnet.arcscan.app']
-                }]
-            });
-
-            await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x4cf1a2' }]
-            });
-
-            alert('Arc Testnet added successfully!');
-        } catch (error: any) {
-            console.error('Failed to add Arc Testnet:', error);
-            if (error.code === 4902) {
-                alert('Arc Testnet could not be added.');
-            } else {
-                alert('Please add Arc Testnet manually in MetaMask settings.');
-            }
-        }
-    };
-    
-    const NavLink: React.FC<{ view: 'dashboard' | 'market' | 'swap' | 'history', children: React.ReactNode }> = ({ view, children }) => (
+const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
+    const NavLink: React.FC<{ view: 'dashboard' | 'market' | 'swap' | 'history' | 'legacy', children: React.ReactNode }> = ({ view, children }) => (
         <button
             onClick={() => setActiveView(view)}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -86,6 +41,7 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                            <NavLink view="market">Market</NavLink>
                            <NavLink view="swap">Swap</NavLink>
                            <NavLink view="history">History</NavLink>
+                           <NavLink view="legacy">Legacy</NavLink>
                            <a
                                href="https://arcbridge.vercel.app/"
                                target="_blank"
@@ -97,10 +53,12 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                         </nav>
                     </div>
                     <div className="hidden md:flex items-center justify-center flex-1">
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-arc-accent-primary via-arc-accent-secondary to-arc-accent-primary opacity-30 blur-lg rounded-lg"></div>
-                            <span className="relative bg-gradient-to-r from-arc-accent-primary via-arc-accent-secondary to-arc-accent-primary bg-clip-text text-transparent font-black text-lg tracking-widest animate-pulse">
-                                ARC LENDING PLATFORM & DEX
+                        <div className="flex items-center gap-3">
+                            <span className="text-arc-text-primary font-bold text-lg tracking-wide">
+                                ARC Testnet Lending
+                            </span>
+                            <span className="px-2.5 py-1 rounded-full border border-yellow-600/40 bg-yellow-900/20 text-yellow-200 text-xs font-semibold tracking-wide uppercase">
+                                Legacy Migration
                             </span>
                         </div>
                     </div>
@@ -109,7 +67,7 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                             href="https://faucet.circle.com/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="border border-arc-accent-secondary text-arc-accent-secondary font-bold py-2 px-4 rounded-lg transition-colors hover:bg-arc-accent-secondary hover:text-white"
+                            className="border border-yellow-600/50 text-yellow-200 font-bold py-2 px-4 rounded-lg transition-colors hover:bg-yellow-500/10 hover:border-yellow-400"
                         >
                             Faucet
                         </a>
@@ -131,27 +89,7 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                         >
                             <GithubIcon />
                         </a>
-                        {walletAddress ? (
-                            <div className="flex items-center space-x-3">
-                                <div className="bg-arc-dark-700 text-arc-text-primary px-4 py-2 rounded-lg text-sm font-mono">
-                                    {shortenAddress(walletAddress)}
-                                </div>
-                                <button
-                                    onClick={onDisconnectWallet}
-                                    className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
-                                >
-                                    Disconnect
-                                </button>
-                            </div>
-                        ) : (
-                            <button
-                                onClick={onConnectWallet}
-                                disabled={isConnecting}
-                                className="bg-arc-accent-primary hover:bg-opacity-80 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-                            </button>
-                        )}
+                        <ConnectButton chainStatus="none" />
                     </div>
                 </div>
                  <nav className="md:hidden flex items-center justify-center space-x-4 pb-2">
@@ -159,6 +97,7 @@ const Header: React.FC<HeaderProps> = ({ walletAddress, onConnectWallet, onDisco
                    <NavLink view="market">Market</NavLink>
                    <NavLink view="swap">Swap</NavLink>
                    <NavLink view="history">History</NavLink>
+                   <NavLink view="legacy">Legacy</NavLink>
                    <a
                        href="https://arcbridge.vercel.app/"
                        target="_blank"

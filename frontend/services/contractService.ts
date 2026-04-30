@@ -1,20 +1,28 @@
 import { ethers } from 'ethers';
-import { CONTRACT_ADDRESSES, ARC_TESTNET_CHAIN, RPC_URLS } from '../constants';
+import type { WalletClient } from 'viem';
+
+import { CONTRACT_ADDRESSES, RPC_URLS } from '../constants';
 
 // ABI'ler - basit versiyonlar
 const STABLE_TOKEN_ABI = [
   'function balanceOf(address) view returns (uint256)',
+  'function totalSupply() view returns (uint256)',
   'function approve(address,uint256) returns (bool)',
   'function mint(address,uint256) external',
 ];
 
 const LENDING_POOL_ABI = [
   'function deposit(address,uint256) external',
+  'function depositCollateral(address,uint256) external',
   'function withdraw(address,uint256) external',
   'function balanceOf(address,address) view returns (uint256)',
   'function borrow(address,uint256) external',
   'function repay(address,uint256) external',
   'function getBorrowBalance(address,address) view returns (uint256)',
+  'function getSupplyAPY(address) view returns (uint256)',
+  'function getBorrowAPR(address) view returns (uint256)',
+  'function getAccountLiquidity(address) view returns (uint256,uint256)',
+  'function getMaxBorrowable(address) view returns (uint256)',
   'function approve(address,uint256) returns (bool)',
   'function totalSupplied(address) view returns (uint256)',
   'function totalBorrowed(address) view returns (uint256)',
@@ -39,13 +47,64 @@ const AMM_PAIR_ABI = [
 
 let provider: ethers.BrowserProvider | null = null;
 let signer: ethers.Signer | null = null;
+let readProvider: ethers.JsonRpcProvider | null = null;
+let currentWalletClient: WalletClient | null = null;
 
-// Failover provider - tries multiple RPCs sequentially
-const getFailoverProvider = (): ethers.JsonRpcProvider | null => {
-  // Use only primary RPC for speed (no multi-RPC overhead)
-  // If it fails, app will error (failover can be added later if needed)
-  if (RPC_URLS.length === 0) return null;
-  return new ethers.JsonRpcProvider(RPC_URLS[0]); // Primary RPC only
+export const syncWalletClient = async (walletClient: WalletClient | null): Promise<void> => {
+  currentWalletClient = walletClient;
+
+  if (!walletClient) {
+    provider = null;
+    signer = null;
+    return;
+  }
+
+  const network = walletClient.chain
+    ? {
+        chainId: walletClient.chain.id,
+        name: walletClient.chain.name,
+        ensAddress: undefined,
+      }
+    : undefined;
+
+  provider = new ethers.BrowserProvider(
+    walletClient.transport as unknown as ethers.Eip1193Provider,
+    network,
+  );
+  signer = await provider.getSigner(walletClient.account.address);
+};
+
+const getReadProvider = (): ethers.BrowserProvider | ethers.JsonRpcProvider => {
+  if (readProvider) {
+    return readProvider;
+  }
+
+  if (RPC_URLS.length > 0) {
+    readProvider = new ethers.JsonRpcProvider(RPC_URLS[0]);
+    return readProvider;
+  }
+
+  if (provider) {
+    return provider;
+  }
+
+  throw new Error('No provider available');
+};
+
+const getRequiredSigner = (): ethers.Signer => {
+  if (!signer) {
+    throw new Error('Wallet not connected');
+  }
+
+  return signer;
+};
+
+const getReadLendingPoolContract = () => {
+  return new ethers.Contract(CONTRACT_ADDRESSES.lendingPool, LENDING_POOL_ABI, getReadProvider());
+};
+
+const getReadAmmPairContract = (pairAddress: string) => {
+  return new ethers.Contract(pairAddress, AMM_PAIR_ABI, getReadProvider());
 };
 
 export const connectWallet = async (): Promise<string> => {
@@ -76,65 +135,35 @@ export const connectWallet = async (): Promise<string> => {
 };
 
 export const disconnectWallet = async () => {
-  // Clear local state
+  currentWalletClient = null;
   provider = null;
   signer = null;
-  
-  // Disconnect from MetaMask
-  if (window.ethereum && window.ethereum.selectedAddress) {
-    try {
-      // MetaMask doesn't have a direct disconnect, but we can clear permissions
-      await window.ethereum.request({
-        method: 'wallet_revokePermissions',
-        params: [
-          {
-            eth_accounts: {}
-          }
-        ]
-      }).catch(() => {
-        // If revoke fails, that's ok - just clear local state
-      });
-    } catch (error) {
-      console.log('Revoke permissions not supported, local state cleared');
-    }
-  }
 };
 
 export const getTokenContract = (tokenAddress: string, useProviderOnly = false) => {
-  if (!provider) {
-    throw new Error('Wallet not connected');
-  }
   if (useProviderOnly) {
-    return new ethers.Contract(tokenAddress, STABLE_TOKEN_ABI, provider);
+    return new ethers.Contract(tokenAddress, STABLE_TOKEN_ABI, getReadProvider());
   }
-  if (!signer) {
-    throw new Error('Wallet not connected');
-  }
-  return new ethers.Contract(tokenAddress, STABLE_TOKEN_ABI, signer);
+
+  return new ethers.Contract(tokenAddress, STABLE_TOKEN_ABI, getRequiredSigner());
 };
 
 export const getContracts = () => {
-  if (!provider || !signer) {
-    throw new Error('Wallet not connected');
-  }
+  const activeSigner = getRequiredSigner();
 
-  const lendingPool = new ethers.Contract(CONTRACT_ADDRESSES.lendingPool, LENDING_POOL_ABI, signer);
-  const scheduledPayoutManager = new ethers.Contract(CONTRACT_ADDRESSES.scheduledPayoutManager, SCHEDULED_PAYOUT_MANAGER_ABI, signer);
+  const lendingPool = new ethers.Contract(CONTRACT_ADDRESSES.lendingPool, LENDING_POOL_ABI, activeSigner);
+  const scheduledPayoutManager = new ethers.Contract(CONTRACT_ADDRESSES.scheduledPayoutManager, SCHEDULED_PAYOUT_MANAGER_ABI, activeSigner);
   
   // For AMM pairs, default to ETH/WBTC but could be any of the three
-  const ammPair = new ethers.Contract(CONTRACT_ADDRESSES.ammPairETHWBTC, AMM_PAIR_ABI, signer);
+  const ammPair = new ethers.Contract(CONTRACT_ADDRESSES.ammPairETHWBTC, AMM_PAIR_ABI, activeSigner);
 
   return { lendingPool, scheduledPayoutManager, ammPair };
 };
 
 export const getTokenBalance = async (tokenAddress: string, address: string): Promise<string> => {
   try {
-    // Try to use failover provider for read-only operations
-    const readProvider = getFailoverProvider() || provider;
-    if (!readProvider) throw new Error('No provider available');
-    
     // For all tokens (including native USDC), use ERC20 call
-    const token = new ethers.Contract(tokenAddress, STABLE_TOKEN_ABI, readProvider);
+    const token = getTokenContract(tokenAddress, true);
     const balance = await token.balanceOf(address);
     
     // USDC and EURC are 6 decimals, WBTC is 8, others are 18
@@ -164,9 +193,12 @@ export const depositToPool = async (tokenAddress: string, amount: string): Promi
   await approveTx.wait();
   console.log('Token approved');
 
-  // Then deposit
+  // Then deposit. Interest-bearing assets use deposit(); collateral-only assets use depositCollateral().
   console.log('Executing deposit...');
-  const depositTx = await lendingPool.deposit(tokenAddress, amountWei);
+  const isLendingEnabled = tokenAddress === CONTRACT_ADDRESSES.usdc || tokenAddress === CONTRACT_ADDRESSES.eurc;
+  const depositTx = isLendingEnabled
+    ? await lendingPool.deposit(tokenAddress, amountWei)
+    : await lendingPool.depositCollateral(tokenAddress, amountWei);
   await depositTx.wait();
   console.log('Deposit successful');
 };
@@ -227,8 +259,7 @@ export const repayToPool = async (tokenAddress: string, amount: string): Promise
 
 export const getPoolBalance = async (tokenAddress: string, address: string): Promise<string> => {
   try {
-    if (!provider) throw new Error('Wallet not connected');
-    const { lendingPool } = getContracts();
+    const lendingPool = getReadLendingPoolContract();
     const balance = await lendingPool.balanceOf(tokenAddress, address);
     // USDC and EURC are 6 decimals, WBTC is 8, others are 18
     const decimals = (tokenAddress === CONTRACT_ADDRESSES.usdc || tokenAddress === CONTRACT_ADDRESSES.eurc) ? 6 : 
@@ -242,8 +273,7 @@ export const getPoolBalance = async (tokenAddress: string, address: string): Pro
 
 export const getBorrowBalance = async (tokenAddress: string, address: string): Promise<string> => {
   try {
-    if (!provider) throw new Error('Wallet not connected');
-    const { lendingPool } = getContracts();
+    const lendingPool = getReadLendingPoolContract();
     const balance = await lendingPool.getBorrowBalance(tokenAddress, address);
     // USDC and EURC are 6 decimals, WBTC is 8, others are 18
     const decimals = (tokenAddress === CONTRACT_ADDRESSES.usdc || tokenAddress === CONTRACT_ADDRESSES.eurc) ? 6 : 
@@ -257,7 +287,6 @@ export const getBorrowBalance = async (tokenAddress: string, address: string): P
 
 export const getTotalSupply = async (tokenAddress: string): Promise<string> => {
   try {
-    if (!provider) throw new Error('Wallet not connected');
     const token = getTokenContract(tokenAddress, true); // useProviderOnly = true
     const totalSupply = await token.totalSupply();
     // USDC and EURC are 6 decimals, others are 18
@@ -271,7 +300,6 @@ export const getTotalSupply = async (tokenAddress: string): Promise<string> => {
 
 export const getTotalBorrowed = async (tokenAddress: string): Promise<string> => {
   try {
-    if (!provider) throw new Error('Wallet not connected');
     // For now, calculate based on total supply with realistic utilization rates
     const totalSupply = await getTotalSupply(tokenAddress);
     const utilizationRate = tokenAddress === CONTRACT_ADDRESSES.usdc ? 0.7 : 0.7; // 70% utilization
@@ -285,8 +313,7 @@ export const getTotalBorrowed = async (tokenAddress: string): Promise<string> =>
 
 export const getPoolTotalSupplied = async (tokenAddress: string): Promise<string> => {
   try {
-    if (!provider) throw new Error('Wallet not connected');
-    const { lendingPool } = getContracts();
+    const lendingPool = getReadLendingPoolContract();
     console.log('Calling totalSupplied for', tokenAddress);
     const totalSupplied = await lendingPool.totalSupplied(tokenAddress);
     console.log('Raw totalSupplied:', totalSupplied.toString());
@@ -304,8 +331,7 @@ export const getPoolTotalSupplied = async (tokenAddress: string): Promise<string
 
 export const getPoolTotalBorrowed = async (tokenAddress: string): Promise<string> => {
   try {
-    if (!provider) throw new Error('Wallet not connected');
-    const { lendingPool } = getContracts();
+    const lendingPool = getReadLendingPoolContract();
     const totalBorrowed = await lendingPool.totalBorrowed(tokenAddress);
     // USDC and EURC are 6 decimals, WBTC is 8, others are 18
     const decimals = (tokenAddress === CONTRACT_ADDRESSES.usdc || tokenAddress === CONTRACT_ADDRESSES.eurc) ? 6 : 
@@ -314,6 +340,54 @@ export const getPoolTotalBorrowed = async (tokenAddress: string): Promise<string
   } catch (error) {
     console.error('Error getting pool total borrowed:', error);
     return '0';
+  }
+};
+
+export const getSupplyAPY = async (tokenAddress: string): Promise<number> => {
+  try {
+    const lendingPool = getReadLendingPoolContract();
+    const apyBps = await lendingPool.getSupplyAPY(tokenAddress);
+    return Number(apyBps) / 100;
+  } catch (error) {
+    console.error('Error getting supply APY:', error);
+    return 0;
+  }
+};
+
+export const getBorrowAPR = async (tokenAddress: string): Promise<number> => {
+  try {
+    const lendingPool = getReadLendingPoolContract();
+    const aprBps = await lendingPool.getBorrowAPR(tokenAddress);
+    return Number(aprBps) / 100;
+  } catch (error) {
+    console.error('Error getting borrow APR:', error);
+    return 0;
+  }
+};
+
+export const getAccountLiquidity = async (userAddress: string): Promise<{ collateralValue: number; borrowValue: number }> => {
+  try {
+    const lendingPool = getReadLendingPoolContract();
+    const [collateralValue, borrowValue] = await lendingPool.getAccountLiquidity(userAddress);
+    return {
+      collateralValue: Number(ethers.formatUnits(collateralValue, 18)),
+      borrowValue: Number(ethers.formatUnits(borrowValue, 18)),
+    };
+  } catch (error) {
+    console.error('Error getting account liquidity:', error);
+    // Price-based liquidity may be unavailable on older deployments. Do not break portfolio loading.
+    return { collateralValue: 0, borrowValue: 0 };
+  }
+};
+
+export const getMaxBorrowable = async (userAddress: string): Promise<number> => {
+  try {
+    const lendingPool = getReadLendingPoolContract();
+    const maxBorrowable = await lendingPool.getMaxBorrowable(userAddress);
+    return Number(ethers.formatUnits(maxBorrowable, 18));
+  } catch (error) {
+    console.error('Error getting max borrowable:', error);
+    return 0;
   }
 };
 
@@ -336,9 +410,18 @@ const getPairAddressForTokens = (tokenIn: string, tokenOut: string): string => {
   // Normalize to lowercase for comparison
   const tin = tokenIn.toLowerCase();
   const tout = tokenOut.toLowerCase();
+  const usdc = CONTRACT_ADDRESSES.usdc.toLowerCase();
+  const eurc = CONTRACT_ADDRESSES.eurc.toLowerCase();
   const eth = CONTRACT_ADDRESSES.eth.toLowerCase();
   const wbtc = CONTRACT_ADDRESSES.wbtc.toLowerCase();
   const arc = CONTRACT_ADDRESSES.arc.toLowerCase();
+
+  if ((tin === usdc && tout === eurc) || (tin === eurc && tout === usdc)) {
+    if (!CONTRACT_ADDRESSES.ammPairUSDCEURC || CONTRACT_ADDRESSES.ammPairUSDCEURC === '0x0000000000000000000000000000000000000000') {
+      throw new Error('USDC/EURC pair address is not configured');
+    }
+    return CONTRACT_ADDRESSES.ammPairUSDCEURC;
+  }
 
   // ETH/WBTC pair
   if ((tin === eth && tout === wbtc) || (tin === wbtc && tout === eth)) {
@@ -364,13 +447,11 @@ const getTokenDecimals = (tokenAddress: string): number => {
 };
 
 export const swapTokens = async (tokenIn: string, tokenOut: string, amountIn: string, minAmountOut: string): Promise<any> => {
-  if (!provider || !signer) {
-    throw new Error('Wallet not connected');
-  }
+  const activeSigner = getRequiredSigner();
 
   // Get the correct pair for this token combination
   const pairAddress = getPairAddressForTokens(tokenIn, tokenOut);
-  const ammPair = new ethers.Contract(pairAddress, AMM_PAIR_ABI, signer);
+  const ammPair = new ethers.Contract(pairAddress, AMM_PAIR_ABI, activeSigner);
 
   // Parse amounts with correct decimals for each token
   const inDecimals = getTokenDecimals(tokenIn);
@@ -380,8 +461,8 @@ export const swapTokens = async (tokenIn: string, tokenOut: string, amountIn: st
   const minAmountOutWei = ethers.parseUnits(minAmountOut, outDecimals);
 
   // Check allowance and approve if necessary
-  const tokenContract = new ethers.Contract(tokenIn, ['function allowance(address,address) view returns (uint256)', 'function approve(address,uint256) returns (bool)'], signer);
-  const userAddress = await signer!.getAddress();
+  const tokenContract = new ethers.Contract(tokenIn, ['function allowance(address,address) view returns (uint256)', 'function approve(address,uint256) returns (bool)'], activeSigner);
+  const userAddress = await activeSigner.getAddress();
   const currentAllowance = await tokenContract.allowance(userAddress, pairAddress);
   
   console.log(`Current allowance for ${tokenIn}:`, currentAllowance.toString());
@@ -430,15 +511,9 @@ export const removeLiquidity = async (liquidityAmount: string): Promise<any> => 
 };
 
 export const getSwapAmountOut = async (tokenIn: string, tokenOut: string, amountIn: string): Promise<bigint> => {
-  // Try to use failover provider for read-only operations
-  const readProvider = getFailoverProvider() || provider;
-  if (!readProvider) {
-    throw new Error('No provider available');
-  }
-
   // Get the correct pair for this token combination
   const pairAddress = getPairAddressForTokens(tokenIn, tokenOut);
-  const ammPair = new ethers.Contract(pairAddress, AMM_PAIR_ABI, readProvider);
+  const ammPair = getReadAmmPairContract(pairAddress);
   
   const inDecimals = getTokenDecimals(tokenIn);
   const amountInWei = ethers.parseUnits(amountIn, inDecimals);
@@ -448,7 +523,11 @@ export const getSwapAmountOut = async (tokenIn: string, tokenOut: string, amount
 };
 
 export const getPoolReserves = async (): Promise<{usdc: string, eurc: string}> => {
-  const { ammPair } = getContracts();
+  if (!CONTRACT_ADDRESSES.ammPairUSDCEURC || CONTRACT_ADDRESSES.ammPairUSDCEURC === '0x0000000000000000000000000000000000000000') {
+    return { usdc: '0', eurc: '0' };
+  }
+
+  const ammPair = getReadAmmPairContract(CONTRACT_ADDRESSES.ammPairUSDCEURC);
   
   const [usdcReserve, eurcReserve] = await Promise.all([
     ammPair.reserveUSDC(),
@@ -462,7 +541,11 @@ export const getPoolReserves = async (): Promise<{usdc: string, eurc: string}> =
 };
 
 export const getUserLiquidity = async (userAddress: string): Promise<string> => {
-  const { ammPair } = getContracts();
+  if (!CONTRACT_ADDRESSES.ammPairUSDCEURC || CONTRACT_ADDRESSES.ammPairUSDCEURC === '0x0000000000000000000000000000000000000000') {
+    return '0';
+  }
+
+  const ammPair = getReadAmmPairContract(CONTRACT_ADDRESSES.ammPairUSDCEURC);
   
   const liquidity = await ammPair.liquidity(userAddress);
   return ethers.formatUnits(liquidity, 18);

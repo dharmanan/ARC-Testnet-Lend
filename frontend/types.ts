@@ -10,6 +10,8 @@ export interface Asset {
   totalBorrowed: number;
   liquidationThreshold: number;
   isCollateral: boolean;
+  lendingEnabled: boolean; // Can users supply/lend this token?
+  borrowEnabled: boolean;  // Can users borrow this token?
   baseRate: number;
   multiplier: number;
   reserveFactor: number;

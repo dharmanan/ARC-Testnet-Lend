@@ -214,6 +214,22 @@ contract LendingPoolTest is Test {
         pool = new LendingPool();
         wbtc = new MockWBTC();
 
+        // Initialize token config for lending
+        pool.initializeToken(
+            address(wbtc),
+            200,    // baseRate 2%
+            1000,   // slope1 10%
+            6000,   // slope2 60%
+            8000,   // kink 80%
+            1000,   // reserveFactor 10%
+            true,   // lendingEnabled
+            true,   // borrowEnabled
+            9000,   // collateralFactor 90%
+            9500,   // liquidationThreshold 95%
+            18      // decimals (WBTC mock uses 18 for simplicity in tests)
+        );
+        pool.setAssetPrice(address(wbtc), 65000e8);
+
         // Mint tokens
         wbtc.mint(alice, 1000 ether);
         wbtc.mint(bob, 1000 ether);
@@ -305,6 +321,22 @@ contract ScheduledPayoutManagerTest is Test {
         pool = new LendingPool();
         manager = new ScheduledPayoutManager(pool);
         wbtc = new MockWBTC();
+
+        // Initialize token config for lending
+        pool.initializeToken(
+            address(wbtc),
+            200,    // baseRate 2%
+            1000,   // slope1 10%
+            6000,   // slope2 60%
+            8000,   // kink 80%
+            1000,   // reserveFactor 10%
+            true,   // lendingEnabled
+            true,   // borrowEnabled
+            9000,   // collateralFactor 90%
+            9500,   // liquidationThreshold 95%
+            18      // decimals
+        );
+        pool.setAssetPrice(address(wbtc), 65000e8);
 
         // Setup permissions
         pool.setScheduler(address(manager));

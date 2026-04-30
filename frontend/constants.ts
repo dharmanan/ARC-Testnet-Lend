@@ -1,5 +1,7 @@
 import { Asset } from './types';
 
+export { ARC_RPC_URLS as RPC_URLS, ARC_TESTNET_CHAIN } from './lib/chains';
+
 export const CONTRACT_ADDRESSES: Record<string, string> = {
   stableToken: '0x78b8d44732a7e3601328B016d0bc0D30471685B7', // Our deployed tUSD
   usdc: '0x3600000000000000000000000000000000000000', // Arc native USDC
@@ -9,31 +11,17 @@ export const CONTRACT_ADDRESSES: Record<string, string> = {
   arc: '0x56EFFB3b22DBBE576E4327D196aa5ed51476924e', // Mock ARC
   lendingPool: '0x9dD7314B876fF9dFFB4F9aC4d4c8540156cf10b9', // LendingPool
   scheduledPayoutManager: '0x2A094018d03E9F8f6321e55513aA0EaC89DFdEEf', // ScheduledPayoutManager
+  ammPairUSDCEURC: '0x0000000000000000000000000000000000000000', // TODO: replace with deployed USDCEURCPair
   // GenericAMMPairs (MockTokens - no transfer limits)
   ammPairETHWBTC: '0xF4638B258905C6a2F7Aa71E05aAC887dB697c338', // ETH/WBTC
   ammPairETHARC: '0x677df5298Fd0a80672b1E6B4a61BEB75534a83A1', // ETH/ARC
   ammPairWBTCARC: '0x27e14cfEF1a029A32F574263dce67371bce32d24', // WBTC/ARC
 };
 
-// RPC URLs in priority order - system will try each one if previous fails
-export const RPC_URLS = [
-  'https://rpc.testnet.arc.network',               // Primary - official Arc
-  'https://rpc.drpc.testnet.arc.network',          // Fallback 2
-  'https://rpc.quicknode.testnet.arc.network',     // Fallback 3
-  'https://rpc.blockdaemon.testnet.arc.network',   // Fallback - Blockdaemon (eski veri döndürebiliyor)
-];
-
-export const ARC_TESTNET_CHAIN = {
-  chainId: '0x4cf1a2',
-  chainName: 'Arc Testnet',
-  nativeCurrency: {
-    name: 'USDC',
-    symbol: 'USDC',
-    decimals: 18, // MetaMask requires 18, decimals handled in code
-  },
-  rpcUrls: RPC_URLS,
-  blockExplorerUrls: ['https://testnet.arcscan.app'],
-};
+export const POOL_ADDRESSES = {
+  legacy: CONTRACT_ADDRESSES.lendingPool,
+  active: '', // Set when the replacement pool is deployed.
+} as const;
 
 export const ASSETS: Asset[] = [
   {
@@ -42,15 +30,17 @@ export const ASSETS: Asset[] = [
     symbol: 'ETH',
     icon: 'eth',
     priceUSD: 3500.00,
-    supplyApy: 3.25, // Will be dynamically calculated
-    borrowApy: 4.50, // Will be dynamically calculated
-    totalSupplied: 120000,
-    totalBorrowed: 80000,
+    supplyApy: 0, // Collateral-only, no lending APY
+    borrowApy: 0, // Cannot be borrowed
+    totalSupplied: 0,
+    totalBorrowed: 0,
     liquidationThreshold: 0.85,
     isCollateral: true,
-    baseRate: 2,
-    multiplier: 5,
-    reserveFactor: 0.15,
+    lendingEnabled: false, // Collateral-only
+    borrowEnabled: false,  // Cannot be borrowed
+    baseRate: 0,
+    multiplier: 0,
+    reserveFactor: 0,
     contractAddress: CONTRACT_ADDRESSES.eth,
   },
   {
@@ -59,15 +49,17 @@ export const ASSETS: Asset[] = [
     symbol: 'WBTC',
     icon: 'wbtc',
     priceUSD: 65000.00,
-    supplyApy: 0.50, // Will be dynamically calculated
-    borrowApy: 1.25, // Will be dynamically calculated
-    totalSupplied: 5000,
-    totalBorrowed: 2000,
+    supplyApy: 0, // Collateral-only, no lending APY
+    borrowApy: 0, // Cannot be borrowed
+    totalSupplied: 0,
+    totalBorrowed: 0,
     liquidationThreshold: 0.80,
     isCollateral: true,
-    baseRate: 0.25,
-    multiplier: 2,
-    reserveFactor: 0.20,
+    lendingEnabled: false, // Collateral-only
+    borrowEnabled: false,  // Cannot be borrowed
+    baseRate: 0,
+    multiplier: 0,
+    reserveFactor: 0,
     contractAddress: CONTRACT_ADDRESSES.wbtc,
   },
   {
@@ -76,12 +68,14 @@ export const ASSETS: Asset[] = [
     symbol: 'USDC',
     icon: 'usdc',
     priceUSD: 1.00,
-    supplyApy: 5.50, // Will be dynamically calculated
-    borrowApy: 7.20, // Will be dynamically calculated
+    supplyApy: 5.50, // Real lending APY
+    borrowApy: 7.20, // Real borrow APY
     totalSupplied: 50000000,
     totalBorrowed: 35000000,
     liquidationThreshold: 0.90,
     isCollateral: true,
+    lendingEnabled: true, // Primary lending token
+    borrowEnabled: true,  // Can be borrowed
     baseRate: 3,
     multiplier: 10,
     reserveFactor: 0.10,
@@ -93,12 +87,14 @@ export const ASSETS: Asset[] = [
     symbol: 'EURC',
     icon: 'eurc',
     priceUSD: 1.08,
-    supplyApy: 5.20, // Will be dynamically calculated
-    borrowApy: 7.00, // Will be dynamically calculated
+    supplyApy: 5.20, // Real lending APY
+    borrowApy: 7.00, // Real borrow APY
     totalSupplied: 30000000,
     totalBorrowed: 21000000,
     liquidationThreshold: 0.88,
     isCollateral: true,
+    lendingEnabled: true, // Primary lending token
+    borrowEnabled: true,  // Can be borrowed
     baseRate: 2.8,
     multiplier: 10,
     reserveFactor: 0.10,
@@ -110,15 +106,17 @@ export const ASSETS: Asset[] = [
     symbol: 'ARC',
     icon: 'arc',
     priceUSD: 2.50,
-    supplyApy: 2.10, // Will be dynamically calculated
-    borrowApy: 3.50, // Will be dynamically calculated
-    totalSupplied: 1000000,
-    totalBorrowed: 400000,
+    supplyApy: 0, // Collateral-only, no lending APY
+    borrowApy: 0, // Cannot be borrowed
+    totalSupplied: 0,
+    totalBorrowed: 0,
     liquidationThreshold: 0.60,
     isCollateral: true,
-    baseRate: 1.5,
-    multiplier: 4,
-    reserveFactor: 0.25,
+    lendingEnabled: false, // Collateral-only
+    borrowEnabled: false,  // Cannot be borrowed
+    baseRate: 0,
+    multiplier: 0,
+    reserveFactor: 0,
     contractAddress: CONTRACT_ADDRESSES.arc,
   },
 ];
