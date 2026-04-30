@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
     const NavLink: React.FC<{ view: 'dashboard' | 'market' | 'swap' | 'history' | 'legacy', children: React.ReactNode }> = ({ view, children }) => (
         <button
             onClick={() => setActiveView(view)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                 activeView === view
                     ? 'bg-arc-dark-700 text-white'
                     : 'text-arc-text-secondary hover:bg-arc-dark-800 hover:text-white'
@@ -42,14 +42,12 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
                            <NavLink view="swap">Swap</NavLink>
                            <NavLink view="history">History</NavLink>
                            <NavLink view="legacy">Legacy</NavLink>
-                           <a
-                               href="https://arcbridge.vercel.app/"
-                               target="_blank"
-                               rel="noopener noreferrer"
-                               className="px-4 py-2 rounded-md text-sm font-medium text-arc-text-secondary hover:bg-arc-dark-800 hover:text-white transition-colors"
+                           <button
+                               onClick={() => window.open('https://arcbridge.vercel.app/', '_blank', 'noopener')}
+                   className="px-4 py-2 rounded-md text-sm font-medium text-arc-text-secondary hover:bg-arc-dark-800 hover:text-white transition-colors cursor-pointer"
                            >
                                Bridge
-                           </a>
+                           </button>
                         </nav>
                     </div>
                     <div className="hidden md:flex items-center justify-center flex-1">
@@ -67,7 +65,7 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
                             href="https://faucet.circle.com/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="border border-yellow-600/50 text-yellow-200 font-bold py-2 px-4 rounded-lg transition-colors hover:bg-yellow-500/10 hover:border-yellow-400"
+                            className="border border-yellow-600/50 text-yellow-200 font-bold py-2 px-4 rounded-lg transition-colors hover:bg-yellow-500/10 hover:border-yellow-400 cursor-pointer"
                         >
                             Faucet
                         </a>
@@ -75,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
                             href="https://x.com/KohenEric"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-arc-text-secondary hover:text-white transition-colors p-2 rounded-lg hover:bg-arc-dark-700"
+                            className="text-arc-text-secondary hover:text-white transition-colors p-2 rounded-lg hover:bg-arc-dark-700 cursor-pointer"
                             title="Follow on X (Twitter)"
                         >
                             <TwitterIcon />
@@ -84,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
                             href="https://github.com/dharmanan"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-arc-text-secondary hover:text-white transition-colors p-2 rounded-lg hover:bg-arc-dark-700"
+                            className="text-arc-text-secondary hover:text-white transition-colors p-2 rounded-lg hover:bg-arc-dark-700 cursor-pointer"
                             title="View on GitHub"
                         >
                             <GithubIcon />
@@ -102,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
                        href="https://arcbridge.vercel.app/"
                        target="_blank"
                        rel="noopener noreferrer"
-                       className="px-4 py-2 rounded-md text-sm font-medium text-arc-text-secondary hover:bg-arc-dark-800 hover:text-white transition-colors"
+                       className="px-4 py-2 rounded-md text-sm font-medium text-arc-text-secondary hover:bg-arc-dark-800 hover:text-white transition-colors cursor-pointer"
                    >
                        Bridge
                    </a>
