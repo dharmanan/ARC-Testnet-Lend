@@ -1,6 +1,6 @@
-# ARC Testnet Lending Protocol v2.2
+# ARC Testnet Lending Protocol v2.3
 
-Arc Testnet Lending Protocol v2.2 is a testnet-only DeFi playground that combines collateralized lending, AMM swaps, and a scheduled payout manager on Arc Testnet. The current repo state includes dependency automation, a wagmi + viem wallet stack with RainbowKit popup flow, wallet-independent read paths, stricter app state handling, and a legacy-pool migration UI that prepares users for a replacement lending pool.
+Arc Testnet Lending Protocol v2.3 is a testnet-only DeFi playground that combines collateralized lending, AMM swaps, and a scheduled payout manager on Arc Testnet. The current repo state includes dependency automation, a wagmi + viem wallet stack with RainbowKit popup flow, wallet-independent read paths, stricter app state handling, and a legacy-pool migration UI that prepares users for a replacement lending pool.
 
 [![Tests](https://img.shields.io/badge/tests-20%2F20-green)](#validation-status) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -17,7 +17,7 @@ This repository is for Arc Testnet only.
 - Frontend: [https://arclending.vercel.app/](https://arclending.vercel.app/)
 - Bridge reference app: [https://arcbridge.vercel.app/](https://arcbridge.vercel.app/)
 
-## What's Included in v2.2
+## What's Included in v2.3
 
 - Dependency automation: `.github/dependabot.yml` covers the root package, `frontend`, and GitHub Actions; `.github/workflows/dependency-review.yml` reviews dependency changes on pull requests.
 - Wallet and Web3 migration: the frontend now uses `wagmi` + `viem` with RainbowKit's wallet popup for injected, Coinbase, and optional WalletConnect flows.
@@ -29,6 +29,8 @@ This repository is for Arc Testnet only.
 - Active vs legacy pool preparation: the frontend address config now separates `legacy` and future `active` pool addresses so the replacement pool can be introduced without losing legacy access.
 - Tooling cleanup: Tailwind 4, Vite config updates, `dotenv` refresh, and Foundry library updates are in place.
 - Final cleanup status: the repository root `npm audit` is clean, the frontend `npm audit` is clean, and the frontend build still emits a Vite chunk-size warning for the wallet bundle.
+- Security headers: `Content-Security-Policy`, `X-Content-Type-Options`, `Referrer-Policy`, and `Permissions-Policy` added to Vercel deployment config.
+- UX improvements: withdraw and repay show success notifications with amount and asset; legacy pool screen shows per-asset pool remaining liquidity; withdraw prechecks catch insufficient pool liquidity before sending the transaction.
 
 ## Validation Status
 
@@ -169,7 +171,6 @@ Important migration notes:
 - Because of that deployment mismatch, legacy APY is intentionally limited or hidden where needed instead of showing possibly incorrect values.
 - When the replacement pool is deployed, the user interface will change again to separate the new active pool from the legacy withdrawal flow.
 
-See also: [`docs/LEGACY_POOL_MIGRATION_PLAN.md`](docs/LEGACY_POOL_MIGRATION_PLAN.md)
 
 ## Project Layout
 
@@ -190,11 +191,9 @@ ARC-Testnet-Lend/
 ## Supporting Docs
 
 - [ROADMAP.md](ROADMAP.md)
-- [docs/LEGACY_POOL_MIGRATION_PLAN.md](docs/LEGACY_POOL_MIGRATION_PLAN.md)
 - [docs/LENDING_POOL_GUIDE.md](docs/LENDING_POOL_GUIDE.md)
 - [docs/METAMASK_RED_ALERT_RPC_DELAY.md](docs/METAMASK_RED_ALERT_RPC_DELAY.md)
 - [docs/WBTC_ARC_APPROVAL_EXPLAINED.md](docs/WBTC_ARC_APPROVAL_EXPLAINED.md)
-- [docs/dev-notes/SMART_CONTRACT_AUDIT.md](docs/dev-notes/SMART_CONTRACT_AUDIT.md)
 
 ## Contributing
 

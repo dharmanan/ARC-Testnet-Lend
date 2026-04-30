@@ -13,9 +13,9 @@
 
 - [ ] Flash loan support in LendingPool
 - [ ] Multi-sig governance for protocol parameters
-- [ ] Advanced slippage protection in AMM swaps
-- [ ] Frontend: wallet connection improvements
-- [ ] Frontend: transaction history & analytics
+- [x] Advanced slippage protection in AMM swaps (1 % frontend slippage guard; on-chain guard pending)
+- [x] Frontend: wallet connection improvements (wagmi + viem + RainbowKit)
+- [x] Frontend: transaction history & analytics (History tab, success notifications)
 - [ ] Gas optimization passes
 
 ## Phase 3: Production Hardening 📋 (Planned)
