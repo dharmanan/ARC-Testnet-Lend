@@ -64,6 +64,7 @@ const App: React.FC = () => {
     const hasConnectedWallet = Boolean(address);
     const isSupportedChain = chainId === undefined || chainId === arcTestnet.id;
     const previousAddressRef = useRef<string | null>(null);
+    const transactionInFlightRef = useRef(false);
 
     const [assets, setAssets] = useState<Asset[]>(ASSETS);
     const [userBalances, setUserBalances] = useState<UserBalance[]>(EMPTY_BALANCES);
@@ -86,6 +87,7 @@ const App: React.FC = () => {
     const [accountLiquidity, setAccountLiquidity] = useState<{ collateralValue: number; borrowValue: number }>({ collateralValue: 0, borrowValue: 0 });
     const [maxBorrowableUSD, setMaxBorrowableUSD] = useState(0);
     const [legacyCountdown, setLegacyCountdown] = useState(() => formatCountdown(LEGACY_SUNSET_END - Date.now()));
+    const isLegacyMode = true;
 
     useEffect(() => {
         const intervalId = window.setInterval(() => {
@@ -103,6 +105,7 @@ const App: React.FC = () => {
         setModalState({ isOpen: false, type: null, asset: null });
         setSuccessModal({ isOpen: false, message: '' });
         setIsTransactionLoading(false);
+        transactionInFlightRef.current = false;
         setAccountLiquidity({ collateralValue: 0, borrowValue: 0 });
         setMaxBorrowableUSD(0);
     };
@@ -289,6 +292,15 @@ const App: React.FC = () => {
     }, [walletAddress]);
 
     const openModal = (type: ModalType, asset: Asset) => {
+        if (isTransactionLoading || transactionInFlightRef.current) {
+            return;
+        }
+
+        if (isLegacyMode && (type === ModalType.SUPPLY || type === ModalType.BORROW)) {
+            alert('Legacy mode active: New supply/borrow actions are disabled. Please use Withdraw/Repay actions from Dashboard or the Legacy tab.');
+            return;
+        }
+
         if (!walletAddress) {
             alert('Connect your wallet to continue. Market data is available without a wallet, but transactions require a connected account on Arc Testnet.');
             return;
@@ -304,11 +316,12 @@ const App: React.FC = () => {
     const findBalance = (balances: UserBalance[], assetId: string) => balances.find(b => b.assetId === assetId)?.amount || 0;
 
     const handleTransaction = async (asset: Asset, amount: number, type: ModalType) => {
-        if (isTransactionLoading) return; // Prevent multiple clicks
+        if (isTransactionLoading || transactionInFlightRef.current) return; // Prevent multiple clicks
         
         const amountNum = Number(amount);
         if (isNaN(amountNum) || amountNum <= 0) return;
 
+        transactionInFlightRef.current = true;
         setIsTransactionLoading(true);
         try {
             switch(type) {
@@ -392,20 +405,27 @@ const App: React.FC = () => {
             closeModal();
         } catch (error) {
             console.error('Transaction failed:', error);
-            alert('Transaction failed: ' + (error as Error).message);
+            const message = (error as Error).message || '';
+            const friendlyMessage = message.includes('estimateGas')
+                ? 'Transaction simulation failed. Likely causes: insufficient token balance, allowance issue, or this action is disabled for the selected asset in the current pool.'
+                : message;
+            alert('Transaction failed: ' + friendlyMessage);
         } finally {
+            transactionInFlightRef.current = false;
             setIsTransactionLoading(false);
         }
     };
     
     const handleSwap = async (fromAsset: Asset, toAsset: Asset, fromAmount: number) => {
-        if (isTransactionLoading) return; // Prevent multiple clicks
+        if (isTransactionLoading || transactionInFlightRef.current) return; // Prevent multiple clicks
         const activeWalletAddress = previousAddressRef.current;
 
         if (!activeWalletAddress) {
             alert('Wallet not connected');
             return;
         }
+
+        transactionInFlightRef.current = true;
         
         setIsTransactionLoading(true);
         try {
@@ -461,8 +481,13 @@ const App: React.FC = () => {
             await loadTotalSupplies();
         } catch (error) {
             console.error('Swap failed:', error);
-            alert('Swap failed: ' + (error as Error).message);
+            const message = (error as Error).message || '';
+            const friendlyMessage = message.includes('estimateGas')
+                ? 'Swap simulation failed. Check token balance, allowance, selected pair liquidity, and network configuration.'
+                : message;
+            alert('Swap failed: ' + friendlyMessage);
         } finally {
+            transactionInFlightRef.current = false;
             setIsTransactionLoading(false);
         }
     };
@@ -490,8 +515,8 @@ const App: React.FC = () => {
     const content = useMemo(() => {
         const props = { assets: assetsWithDynamicApys, userBalances, userSupplies, userBorrows, openModal };
         switch(activeView) {
-            case 'dashboard': return <Dashboard {...props} />;
-            case 'market': return <Market {...props} legacyMode={true} />;
+            case 'dashboard': return <Dashboard {...props} legacyMode={isLegacyMode} />;
+            case 'market': return <Market {...props} legacyMode={isLegacyMode} />;
             case 'swap': return <Swap assets={assetsWithDynamicApys} userBalances={userBalances} onSwap={handleSwap} isLoading={isTransactionLoading} />;
             case 'history': return <History transactions={transactions} />;
             case 'legacy': return <LegacyClaims {...props} />;

@@ -9,7 +9,7 @@ import { formatAssetAmount } from '../lib/formatters';
 interface SwapProps {
     assets: Asset[];
     userBalances: UserBalance[];
-    onSwap: (fromAsset: Asset, toAsset: Asset, fromAmount: number) => void;
+    onSwap: (fromAsset: Asset, toAsset: Asset, fromAmount: number) => Promise<void> | void;
     isLoading?: boolean;
 }
 
@@ -38,6 +38,7 @@ const Swap: React.FC<SwapProps> = ({ assets, userBalances, onSwap, isLoading = f
     const [toAssetId, setToAssetId] = useState<string>('wbtc');
     const [fromAmount, setFromAmount] = useState<string>('');
     const [toAmount, setToAmount] = useState<string>('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
     const fromAsset = assets.find(a => a.id === fromAssetId);
     const toAsset = assets.find(a => a.id === toAssetId);
@@ -95,11 +96,27 @@ const Swap: React.FC<SwapProps> = ({ assets, userBalances, onSwap, isLoading = f
         setFromAmount(formatAssetAmount(fromBalance, fromAsset));
     }
     
-    const handleSubmit = () => {
-        if(fromAsset && toAsset && fromAmount) {
-            onSwap(fromAsset, toAsset, parseFloat(fromAmount));
+    const handleSubmit = async () => {
+        if (isLoading || isSubmitting) {
+            return;
         }
-    }
+
+        if (!fromAsset || !toAsset || !fromAmount) {
+            return;
+        }
+
+        const parsedAmount = parseFloat(fromAmount);
+        if (Number.isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > fromBalance) {
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await Promise.resolve(onSwap(fromAsset, toAsset, parsedAmount));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className="max-w-md mx-auto bg-arc-dark-800 p-6 rounded-xl border border-arc-dark-700 space-y-4">
@@ -139,10 +156,11 @@ const Swap: React.FC<SwapProps> = ({ assets, userBalances, onSwap, isLoading = f
 
             <button
                 onClick={handleSubmit}
-                disabled={!fromAmount || !fromAsset || !toAsset || parseFloat(fromAmount) <= 0 || parseFloat(fromAmount) > fromBalance || isLoading}
-                className="w-full bg-arc-accent-primary text-white font-bold py-3 rounded-lg disabled:bg-arc-dark-700 disabled:text-arc-text-secondary disabled:cursor-not-allowed hover:bg-opacity-80 transition-colors"
+                disabled={!fromAmount || !fromAsset || !toAsset || parseFloat(fromAmount) <= 0 || parseFloat(fromAmount) > fromBalance || isLoading || isSubmitting}
+                className="w-full bg-arc-accent-primary text-white font-bold py-3 rounded-lg transition-all enabled:hover:bg-opacity-80 enabled:active:scale-[0.99] disabled:bg-arc-dark-700 disabled:text-arc-text-secondary disabled:cursor-not-allowed disabled:opacity-60 disabled:pointer-events-none"
+                aria-busy={isLoading || isSubmitting}
             >
-                {isLoading ? 'Swapping...' : 'Swap'}
+                {isLoading || isSubmitting ? 'Swapping...' : 'Swap'}
             </button>
         </div>
     );

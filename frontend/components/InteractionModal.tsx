@@ -23,7 +23,7 @@ interface InteractionModalProps {
     userWalletBalance: number;
     userSupplyBalance: number;
     userBorrowBalance: number;
-    onSubmit: (asset: Asset, amount: number, type: ModalType) => void;
+    onSubmit: (asset: Asset, amount: number, type: ModalType) => Promise<void> | void;
     availableBorrowUSD: number;
     isLoading?: boolean;
 }
@@ -41,6 +41,7 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
     isLoading = false,
 }) => {
     const [amount, setAmount] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const getInputPrecision = () => getAssetDisplayDecimals(asset);
 
@@ -111,12 +112,25 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
     };
     
     const handleSetMax = () => {
-        setAmount(formatAmount(getMaxAmount()));
-    }
+        if (isLoading || isSubmitting) {
+            return;
+        }
 
-    const handleSubmit = (e: React.FormEvent) => {
+        setAmount(formatAmount(getMaxAmount()));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(asset, parseFloat(amount), modalType);
+        if (isLoading || isSubmitting) {
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await Promise.resolve(onSubmit(asset, parseFloat(amount), modalType));
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const getButtonText = () => {
@@ -138,7 +152,7 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
             <div className="bg-arc-dark-800 rounded-lg border border-arc-dark-700 w-full max-w-md m-4">
                 <div className="flex justify-between items-center p-6 border-b border-arc-dark-700">
                     <h2 className="text-xl font-bold">{getTitle()}</h2>
-                    <button onClick={onClose} className="text-arc-text-secondary hover:text-white">&times;</button>
+                    <button onClick={onClose} disabled={isLoading || isSubmitting} className="text-arc-text-secondary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">&times;</button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     <div>
@@ -151,10 +165,11 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
                                 type="text"
                                 value={amount}
                                 onChange={handleAmountChange}
+                                readOnly={isLoading || isSubmitting}
                                 placeholder="0.0"
                                 className="w-full bg-arc-dark-900 border border-arc-dark-700 rounded-md p-3 focus:ring-2 focus:ring-arc-accent-primary focus:outline-none"
                             />
-                            <button type="button" onClick={handleSetMax} className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-arc-accent-primary/20 text-arc-accent-primary px-2 py-1 rounded">MAX</button>
+                            <button type="button" onClick={handleSetMax} disabled={isLoading || isSubmitting} className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-arc-accent-primary/20 text-arc-accent-primary px-2 py-1 rounded disabled:opacity-50 disabled:cursor-not-allowed">MAX</button>
                         </div>
                     </div>
 
@@ -176,10 +191,10 @@ const InteractionModal: React.FC<InteractionModalProps> = ({
                     
                     <button
                         type="submit"
-                        disabled={isAmountInvalid || isLoading}
+                        disabled={isAmountInvalid || isLoading || isSubmitting}
                         className="w-full bg-arc-accent-primary text-white font-bold py-3 rounded-lg disabled:bg-arc-dark-700 disabled:text-arc-text-secondary disabled:cursor-not-allowed hover:bg-opacity-80 transition-colors"
                     >
-                        {isLoading ? 'Processing...' : getButtonText()}
+                        {isLoading || isSubmitting ? 'Processing...' : getButtonText()}
                     </button>
                 </form>
             </div>

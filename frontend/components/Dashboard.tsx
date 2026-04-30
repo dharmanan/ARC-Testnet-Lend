@@ -8,9 +8,10 @@ interface DashboardProps {
     userSupplies: UserBalance[];
     userBorrows: UserBalance[];
     openModal: Function;
+    legacyMode?: boolean;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ assets, userSupplies, userBorrows, openModal }) => {
+const Dashboard: React.FC<DashboardProps> = ({ assets, userSupplies, userBorrows, openModal, legacyMode = false }) => {
     // FIX: Explicitly type assetMap to ensure correct type inference.
     const assetMap: Map<string, Asset> = new Map(assets.map(a => [a.id, a]));
 
@@ -145,8 +146,8 @@ const Dashboard: React.FC<DashboardProps> = ({ assets, userSupplies, userBorrows
             </div>
             
             <div className="space-y-6">
-                <PositionTable title="Your Supplies" assets={suppliedAssets} positions={userSupplies} openModal={openModal} type="supply" />
-                <PositionTable title="Your Borrows" assets={borrowedAssets} positions={userBorrows} openModal={openModal} type="borrow" />
+                <PositionTable title="Your Supplies" assets={suppliedAssets} positions={userSupplies} openModal={openModal} type="supply" legacyMode={legacyMode} />
+                <PositionTable title="Your Borrows" assets={borrowedAssets} positions={userBorrows} openModal={openModal} type="borrow" legacyMode={legacyMode} />
             </div>
         </div>
     );
@@ -158,9 +159,10 @@ interface PositionTableProps {
     positions: UserBalance[];
     openModal: Function;
     type: 'supply' | 'borrow';
+    legacyMode?: boolean;
 }
 
-const PositionTable: React.FC<PositionTableProps> = ({ title, assets, positions, openModal, type }) => {
+const PositionTable: React.FC<PositionTableProps> = ({ title, assets, positions, openModal, type, legacyMode = false }) => {
     if (assets.length === 0) return null;
     
     return (
@@ -186,6 +188,7 @@ const PositionTable: React.FC<PositionTableProps> = ({ title, assets, positions,
                             openModal={openModal}
                             isPosition={true}
                             type={type}
+                            legacyMode={legacyMode}
                         />
                     ))}
                 </tbody>

@@ -60,8 +60,10 @@ const AssetRow: React.FC<AssetRowProps> = ({ asset, balance, userSupplies, userB
                 <td className="p-4 text-right">
                     <div className="flex justify-end space-x-2">
                          <button onClick={() => openModal(type === 'supply' ? ModalType.WITHDRAW : ModalType.REPAY, asset)} className="bg-arc-dark-700 hover:bg-arc-dark-900 text-xs font-bold py-2 px-3 rounded-md transition-colors">{type === 'supply' ? 'Withdraw' : 'Repay'}</button>
-                        {!legacyMode && (
+                        {!legacyMode ? (
                             <button onClick={() => openModal(type === 'supply' ? ModalType.SUPPLY : ModalType.BORROW, asset)} className="bg-arc-accent-primary hover:bg-opacity-80 text-white text-xs font-bold py-2 px-3 rounded-md transition-colors">{type === 'supply' ? 'Supply' : 'Borrow'}</button>
+                        ) : (
+                            <span className="text-xs text-yellow-300 px-2 py-2">Disabled in legacy mode</span>
                         )}
                     </div>
                 </td>
