@@ -3,8 +3,8 @@ import React from 'react';
 
 export const ArcIcon = ({ className = 'w-auto h-8' }: { className?: string }) => (
   <img 
-    src="/arc.png"
-    alt="ARC" 
+        src="/arc.png"
+    alt="Machina" 
     className={className} 
     style={{ objectFit: 'contain' }} 
   />

@@ -1,5 +1,5 @@
 {
-  "name": "ARC",
+  "name": "Machina",
   "description": "A decentralized lending, borrowing, and swapping protocol, inspired by Aave. This application simulates the core functionalities of a DeFi platform with a focus on user experience and clean design.",
   "requestFramePermissions": []
 }

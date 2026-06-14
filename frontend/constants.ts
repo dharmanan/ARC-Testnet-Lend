@@ -8,7 +8,7 @@ export const CONTRACT_ADDRESSES: Record<string, string> = {
   eurc: '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a', // Arc EURC
   eth: '0x6dC1d97820974558e1bD555C04a5A19608F9512d', // Mock ETH
   wbtc: '0x27488Db1F8F9529B5820De984262179Ad913798E', // Mock WBTC
-  arc: '0x56EFFB3b22DBBE576E4327D196aa5ed51476924e', // Mock ARC
+  arc: '0x56EFFB3b22DBBE576E4327D196aa5ed51476924e', // Mock MCN
   lendingPool: '0x9dD7314B876fF9dFFB4F9aC4d4c8540156cf10b9', // LendingPool
   scheduledPayoutManager: '0x2A094018d03E9F8f6321e55513aA0EaC89DFdEEf', // ScheduledPayoutManager
   ammPairUSDCEURC: '0x0000000000000000000000000000000000000000', // TODO: replace with deployed USDCEURCPair
@@ -102,8 +102,8 @@ export const ASSETS: Asset[] = [
   },
   {
     id: 'arc',
-    name: 'Arc Token',
-    symbol: 'ARC',
+    name: 'Machina Token',
+    symbol: 'MCN',
     icon: 'arc',
     priceUSD: 2.50,
     supplyApy: 0, // Collateral-only, no lending APY

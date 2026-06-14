@@ -8,7 +8,7 @@ export const wagmiConfig = createConfig({
   connectors: [
     injected({ shimDisconnect: true }),
     coinbaseWallet({
-      appName: 'ARC Protocol',
+      appName: 'Machina Lending',
     }),
   ],
   transports: {

@@ -569,7 +569,7 @@ const App: React.FC = () => {
                     content
                 ) : (
                     <div className="text-center py-20">
-                        <h2 className="text-3xl font-bold mb-4">Welcome to ARC Protocol</h2>
+                        <h2 className="text-3xl font-bold mb-4">Welcome to Machina Lending</h2>
                         <p className="text-arc-text-secondary mb-8">
                             Use the Market tab for public pool data, or connect your wallet from the header to start lending, borrowing, and swapping.
                         </p>
@@ -582,10 +582,10 @@ const App: React.FC = () => {
                 <div className="container mx-auto px-4 py-8">
                     <div className="text-center text-arc-text-secondary text-sm">
                         <p className="mb-2">
-                            <strong>MVP Testnet Application</strong> - Educational v2 for <a href="https://docs.arc.network/arc/concepts/welcome-to-arc" target="_blank" rel="noopener noreferrer" className="text-arc-accent-primary hover:text-arc-accent-secondary underline">ARC Protocol</a>
+                            <strong>MVP Testnet Application</strong> - Educational v2 for <a href="https://docs.arc.network/arc/concepts/welcome-to-arc" target="_blank" rel="noopener noreferrer" className="text-arc-accent-primary hover:text-arc-accent-secondary underline">Machina Lending</a>
                         </p>
                         <p className="text-xs opacity-75">
-                            This is a testnet demo application for learning and testing ARC Protocol features. 
+                            This is a testnet demo application for learning and testing Machina Lending features. 
                             Not for production use. All transactions use test tokens with no real value.
                         </p>
                     </div>

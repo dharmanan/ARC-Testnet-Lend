@@ -94,7 +94,7 @@ const Dashboard: React.FC<DashboardProps> = ({ assets, userSupplies, userBorrows
             </div>
             <div className="bg-linear-to-r from-blue-900/20 to-purple-900/20 border border-blue-600/50 p-4 rounded-lg">
                 <p className="text-sm text-blue-300">
-                    <span className="font-bold">Real Lending:</span> USDC and EURC supplier balances accrue automatically and are realized on withdrawal. ETH, WBTC, and ARC remain collateral-only.
+                    <span className="font-bold">Real Lending:</span> USDC and EURC supplier balances accrue automatically and are realized on withdrawal. ETH, WBTC, and MCN remain collateral-only.
                 </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-6 gap-6">

@@ -5,7 +5,7 @@ const DISPLAY_DECIMALS_BY_SYMBOL: Record<string, number> = {
   EURC: 6,
   WBTC: 8,
   ETH: 6,
-  ARC: 6,
+  MCN: 6,
 };
 
 const trimTrailingZeros = (value: string) => {

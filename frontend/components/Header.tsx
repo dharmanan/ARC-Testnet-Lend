@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
                         <div className="flex items-center bg-arc-dark-700 px-3 py-2 rounded-lg">
                            <img 
                                src="/arc.png" 
-                               alt="ARC" 
+                               alt="Machina" 
                                className="h-8 w-auto"
                                style={{ objectFit: 'contain' }}
                            />
@@ -42,18 +42,12 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
                            <NavLink view="swap">Swap</NavLink>
                            <NavLink view="history">History</NavLink>
                            <NavLink view="legacy">Legacy</NavLink>
-                           <button
-                               onClick={() => window.open('https://arcbridge.vercel.app/', '_blank', 'noopener')}
-                   className="px-4 py-2 rounded-md text-sm font-medium text-arc-text-secondary hover:bg-arc-dark-800 hover:text-white transition-colors cursor-pointer"
-                           >
-                               Bridge
-                           </button>
                         </nav>
                     </div>
                     <div className="hidden md:flex items-center justify-center flex-1">
                         <div className="flex items-center gap-3">
                             <span className="text-arc-text-primary font-bold text-lg tracking-wide">
-                                ARC Testnet Lending
+                                Machina Lending
                             </span>
                             <span className="px-2.5 py-1 rounded-full border border-yellow-600/40 bg-yellow-900/20 text-yellow-200 text-xs font-semibold tracking-wide uppercase">
                                 Legacy Migration
@@ -96,14 +90,6 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
                    <NavLink view="swap">Swap</NavLink>
                    <NavLink view="history">History</NavLink>
                    <NavLink view="legacy">Legacy</NavLink>
-                   <a
-                       href="https://arcbridge.vercel.app/"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       className="px-4 py-2 rounded-md text-sm font-medium text-arc-text-secondary hover:bg-arc-dark-800 hover:text-white transition-colors cursor-pointer"
-                   >
-                       Bridge
-                   </a>
                 </nav>
             </div>
         </header>
